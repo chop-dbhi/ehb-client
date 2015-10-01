@@ -5,10 +5,11 @@ machine:
 
 dependencies:
     override:
+        - pip install "Django<1.7"
         - docker info
         - docker pull dbhi/ehb-service
 
 test:
     override:
-        - docker run -d -p 8000:8000 dbhi/ehb-service
+        - docker run -d -p 8000:8000 dbhi/ehb-service; sleep 10
         - nosetests
