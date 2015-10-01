@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from unittest import TestCase
 import datetime
+import os
+from unittest import TestCase
+
 
 from ehb_client.requests.subject_request_handler import SubjectRequestHandler, \
     Subject
@@ -17,10 +19,11 @@ from ehb_client.requests.exceptions import PageNotFound, ErrorConstants, \
 
 
 class RequestResources(object):
-    host = '192.168.99.100:8000'
+
+    host = os.environ.get('EHB_HOST', 'localhost:8000')
     isSecure = False
     root_path = ''
-    api_key = '6d743b2b6d795678017bb634c363804f'
+    api_key = os.environ.get('EHB_KEY', '680b8740f60ec65af0163ee7c7959bde')
 
 
 class ehbTestClass(TestCase):
