@@ -1,0 +1,14 @@
+
+machine:
+    services:
+        - docker
+
+dependencies:
+    override:
+        - docker info
+        - docker pull dbhi/ehb-service
+
+test:
+    override:
+        - docker run -d -p 8000:8000 dbhi/ehb-service
+        - nosetests
