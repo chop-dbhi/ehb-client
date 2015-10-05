@@ -33,7 +33,7 @@ Below `row_id` refers to the [neutral primary key](http://github.com/chop-dbhi/b
     real_id = ext_rec.record_id
 ```
 
-Here `ext_rec` represents an [ExternalRecord object](http://github.com/chop-dbhi/ehb-client/blob/example/ehb_client/requests/external_record_request_handler.py#L10-L19).
+Here `ext_rec` represents an [ExternalRecord object](http://github.com/chop-dbhi/ehb-client/blob/example/ehb_client/requests/external_record_request_handler.py#L9-L18).
 
 ### Querying for subject information
 
@@ -52,7 +52,7 @@ date of birth or last name:
     last_name = sub_rec.last_name
 ```
 
-Here `sub_rec` represents a [SubjectRecord object](http://github.com/chop-dbhi/ehb-client/blob/example/ehb_client/requests/subject_request_handler.py#L10-L20).
+Here `sub_rec` represents a [SubjectRecord object](http://github.com/chop-dbhi/ehb-client/blob/example/ehb_client/requests/subject_request_handler.py#L8-L17).
 
 ### Querying for External Record given external record id
 It less likely an application would require this, but if for some reason an application had its internal record ID and needed to get the ehb-service's corresponding External Record, the following would work. The code assumes the id we have is in `external_id`.
