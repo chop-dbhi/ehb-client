@@ -198,6 +198,10 @@ class ehbTestClass(TestCase):
         except PageNotFound:
             pass
         try:
+            self.o_rh.delete(name='testorg99')
+        except PageNotFound:
+            pass
+        try:
             self.er_rh.create(self.er1)
         except PageNotFound:
             pass
