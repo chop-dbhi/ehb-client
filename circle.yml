@@ -12,4 +12,4 @@ dependencies:
 test:
     override:
         - docker run -d -p 8000:8000 dbhi/ehb-service; sleep 10
-        - nosetests
+        - python test_suite.py
