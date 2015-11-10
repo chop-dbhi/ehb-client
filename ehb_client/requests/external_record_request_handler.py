@@ -44,14 +44,14 @@ class ExternalRecord(IdentityBase):
 
     @staticmethod
     def identity_from_jsonObject(jsonObj):
-        es_id = int(jsonObj.get('external_system_id'))
-        s_id = int(jsonObj.get('subject_id'))
+        es_id = int(jsonObj.get('external_system'))
+        s_id = int(jsonObj.get('subject'))
         lm = RequestBase.dateTimeFromJsonString(jsonObj.get('modified'))
         c = RequestBase.dateTimeFromJsonString(jsonObj.get('created'))
         id = int(jsonObj.get('id'))
         rec_id = jsonObj.get('record_id')
         p = jsonObj.get('path')
-        lbl = jsonObj.get('label_id')
+        lbl = jsonObj.get('label')
         return ExternalRecord(
             record_id=rec_id,
             external_system_id=es_id,
@@ -65,16 +65,23 @@ class ExternalRecord(IdentityBase):
 
     @staticmethod
     def json_from_identity(er):
-        q = '"'
-        s = '"subject":"' + str(er.subject_id) + q
-        es = '"external_system":"' + str(er.external_system_id) + q
-        rec = '"record_id":"' + er.record_id + q
-        p = '"path":"' + er.path + q
+        o = {
+            'id': int(er.id),
+            'subject': int(er.subject_id),
+            'external_system': int(er.external_system_id),
+            'record_id': er.record_id,
+            'path': er.path,
+        }
         if er.label_id:
-            rel = '"label":"' + str(er.label_id) + q
+            o['label'] = int(er.label_id)
         else:
-            rel = '"label":"' + 'null' + q
-        return '{' + s + ',' + es + ',' + rec + ',' + p + ',' + rel + '}'
+            o['label'] = 1
+        if er.modified:
+            o['modified'] = er.modified.strftime('%Y-%m-%d %H:%M:%S.%f')
+        if er.created:
+            o['created'] = er.created.strftime('%Y-%m-%d %H:%M:%S.%f')
+
+        return json.dumps(o)
 
     identityLabel = "external_record"
 

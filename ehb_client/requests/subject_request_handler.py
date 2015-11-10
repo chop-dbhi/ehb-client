@@ -5,8 +5,8 @@ from ehb_client.requests.exceptions import InvalidArguments
 
 class Subject(IdentityBase):
 
-    def __init__(self, first_name, last_name, organization_id,
-                 organization_subject_id, dob, modified=None, created=None, id=-1):
+    def __init__(self, first_name=None, last_name=None, organization_id=-1,
+                 organization_subject_id=-1, dob=-1, modified=None, created=None, id=-1):
         self.first_name = first_name
         self.last_name = last_name
         self.organization_id = organization_id  # eHB id of the associated Organization object
@@ -35,7 +35,7 @@ class Subject(IdentityBase):
     def identity_from_jsonObject(jsonObj):
         fn = jsonObj.get('first_name')
         ln = jsonObj.get('last_name')
-        org_id = int(jsonObj.get('organization_id'))
+        org_id = int(jsonObj.get('organization'))
         org_subj_id = jsonObj.get('organization_subject_id')
         dob = RequestBase.dateFromString(jsonObj.get('dob'))
         lm = RequestBase.dateTimeFromJsonString(jsonObj.get('modified'))
@@ -54,15 +54,23 @@ class Subject(IdentityBase):
     def json_from_identity(subject):
         if not hasattr(subject, 'group_name'):
             subject.group_name = ''
-        q = '"'
-        fn = '"first_name":"' + subject.first_name + q
-        ln = '"last_name":"' + subject.last_name + q
-        grp = '"group_name":"' + subject.group_name + q
-        org_id = '"organization":"' + str(subject.organization_id) + q
-        org_subj_id = '"organization_subject_id":"' + subject.organization_subject_id + q
-        dob = '"dob":"' + RequestBase.stringFromDate(subject.dob) + q
-        c = ','
-        return '{' + fn + c + ln + c + org_id + c + org_subj_id + c + dob + c + grp + '}'
+        o = {}
+        o = {
+            'first_name': subject.first_name,
+            'last_name': subject.last_name,
+            'group_name': subject.group_name,
+            'organization_subject_id': subject.organization_subject_id,
+            'organization': subject.organization_id,
+            'dob': RequestBase.stringFromDate(subject.dob),
+            'id': subject.id
+        }
+
+        if subject.modified:
+            o['modified'] = subject.modified.strftime('%Y-%m-%d %H:%M:%S.%f')
+        if subject.created:
+            o['created'] = subject.created.strftime('%Y-%m-%d %H:%M:%S.%f')
+
+        return json.dumps(o)
 
     identityLabel = "subject"
 
