@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
+import json
 from unittest import TestCase
 
 
@@ -79,69 +80,62 @@ class ehbTestClass(TestCase):
         self.org_name_1 = "testOrg001"
         self.org_name_2 = "testOrg002"
         self.subj_id_label_1 = 'org_1_id'
+        try:
+            # Create the Organizations
+            self.o1 = Organization(name=self.org_name_1,
+                                   subject_id_label=self.subj_id_label_1)
+            self.o2 = Organization(name=self.org_name_2,
+                                   subject_id_label=self.subj_id_label_1)
+            r = self.o_rh.create(self.o1, self.o2)
 
-        # Create the Organizations
-        self.o1 = Organization(name=self.org_name_1,
-                               subject_id_label=self.subj_id_label_1)
-        self.o2 = Organization(name=self.org_name_2,
-                               subject_id_label=self.subj_id_label_1)
-        r = self.o_rh.create(self.o1, self.o2)
-        b = r[0].get("success") and r[1].get("success")
+            # Create Subjects
+            dob = datetime.date.today()
+            self.s1 = Subject(first_name='FIRST_ONE', last_name="LAST_ONE",
+                              organization_id=self.o1.id,
+                              organization_subject_id=self.org_subj_id_1, dob=dob)
+            self.s2 = Subject(first_name='FIRST_TWO', last_name="LAST_TWO",
+                              organization_id=self.o1.id,
+                              organization_subject_id=self.org_subj_id_2, dob=dob)
+            self.s3 = Subject(first_name='FIRST_THREE', last_name="LAST_THREE",
+                              organization_id=self.o2.id,
+                              organization_subject_id=self.org_subj_id_3, dob=dob)
+            r = self.s_rh.create(self.s1, self.s2, self.s3)
 
-        self.assertTrue(b, 'Two organization create failed')
+            # Create External Systems
+            self.es1 = ExternalSystem(name=self.es_name1, url="http://test.com/",
+                                      description='A test system')
+            self.es2 = ExternalSystem(name=self.es_name2, url="http://testTwo.com/",
+                                      description='Another test system')
+            r = self.es_rh.create(self.es1, self.es2)
 
-        # Create Subjects
-        dob = datetime.date.today()
-        self.s1 = Subject(first_name='FIRST_ONE', last_name="LAST_ONE",
-                          organization_id=self.o1.id,
-                          organization_subject_id=self.org_subj_id_1, dob=dob)
-        self.s2 = Subject(first_name='FIRST_TWO', last_name="LAST_TWO",
-                          organization_id=self.o1.id,
-                          organization_subject_id=self.org_subj_id_2, dob=dob)
-        self.s3 = Subject(first_name='FIRST_THREE', last_name="LAST_THREE",
-                          organization_id=self.o2.id,
-                          organization_subject_id=self.org_subj_id_3, dob=dob)
-        r = self.s_rh.create(self.s1, self.s2, self.s3)
-        b = r[0].get("success") and r[1].get("success") and r[2].get('success')
-        self.assertTrue(b, 'Subject creation failed')
+            # Create External record
+            self.er1 = ExternalRecord(record_id=self.recid1, subject_id=self.s1.id,
+                                      external_system_id=self.es1.id, path=self.path1,
+                                      label_id=1)
+            self.er2 = ExternalRecord(record_id=self.recid2, subject_id=self.s1.id,
+                                      external_system_id=self.es1.id, path=self.path2,
+                                      label_id=1)
+            r = self.er_rh.create(self.er1, self.er2)
+            self.er1 = r[0]['external_record']
+            self.er2 = r[1]['external_record']
+            # # Create External record link
+            r = self.er_rh.link(self.er1, self.er2, 1)
+            # Create test groups
+            # Subject Group
+            self.g1 = Group(name='testgroup1', is_locking=False,
+                            client_key='ck', description='A test group')
+            # ExternalRecord Group
+            self.g2 = Group(name='exrecgroup', is_locking=False,
+                            client_key='ck', description='An external record group')
+            r = self.g_rh.create(self.g1, self.g2)
 
-        # Create External Systems
-        self.es1 = ExternalSystem(name=self.es_name1, url="http://test.com/",
-                                  description='A test system')
-        self.es2 = ExternalSystem(name=self.es_name2, url="http://testTwo.com/",
-                                  description='Another test system')
-        r = self.es_rh.create(self.es1, self.es2)
-        b = r[0].get("success") and r[1].get("success")
-        self.assertTrue(b, 'Two external system create failed')
+            # Add subject to test group
+            r = self.g_rh.add_subjects(self.g1, [self.s1])
 
-        # Create External record
-        self.er1 = ExternalRecord(record_id=self.recid1, subject_id=self.s1.id,
-                                  external_system_id=self.es1.id, path=self.path1,
-                                  label_id=1)
-        self.er2 = ExternalRecord(record_id=self.recid2, subject_id=self.s1.id,
-                                  external_system_id=self.es1.id, path=self.path2,
-                                  label_id=1)
-        r = self.er_rh.create(self.er1, self.er2)
-        self.assertTrue(
-            r[0].get('success') and r[1].get('success'),
-            'External Record Creation failed')
-
-        # Create test groups
-        # Subject Group
-        self.g1 = Group(name='testgroup1', is_locking=False,
-                        client_key='ck', description='A test group')
-        # ExternalRecord Group
-        self.g2 = Group(name='exrecgroup', is_locking=False,
-                        client_key='ck', description='An external record group')
-        r = self.g_rh.create(self.g1, self.g2)
-        self.assertTrue(r[0].get('success') and r[1].get('success'))
-
-        # Add subject to test group
-        r = self.g_rh.add_subjects(self.g1, [self.s1])
-        self.assertTrue(r[0].get('success'))
-
-        # Add external record to test group
-        r = self.g_rh.add_records(self.g2, [self.er1])
+            # Add external record to test group
+            r = self.g_rh.add_records(self.g2, [self.er1])
+        except:
+            pass
 
     def tearDown(self):
         try:
@@ -414,6 +408,23 @@ class TestExternalRecordHandler(ehbTestClass):
         '''
         r = self.er_rh.get(id=self.er1.id)
         self.assertTrue(r.id == self.er1.id)
+
+    def testExternalRecordGetLinksById(self):
+        '''
+        Try to retrieve an ExternalRecord links by the primary ExternalRecord's
+        ID
+        '''
+        r = self.er_rh.get(id=self.er1.id, links=True)
+        self.assertEqual(len(r), 1)
+        self.assertEqual(r[0]['external_record']['id'], 4)
+
+    def testExternalRecordDeleteLinks(self):
+        '''
+        Try to retrieve an ExternalRecord links by the primary ExternalRecord's
+        ID
+        '''
+        r = self.er_rh.unlink(self.er1, 1)
+        self.assertTrue(json.loads(r)['success'])
 
     def testExternalRecordDeleteByPath(self):
         '''

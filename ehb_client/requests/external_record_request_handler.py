@@ -191,9 +191,10 @@ class ExternalRecordRequestHandler(JsonRequestBase):
             return f_notfound(qdict)
 
     def get(self, **kwargs):
-        '''Attempts to locate the external record in the ehb-service database:
+        '''Attempts to locate the external record or its links in the ehb-service database:
         Inputs:
             id = integer value of the externalRecord record id in the ehb-service
+            links = boolean value to request the links to a record rather than the record itself.
         OR any combination of Subject, ExternalSystem and path. In this case it is not possible to
         guarantee a single value in the response.
         It is not necessary to specify all 3, but at least 1 must be provided.
@@ -212,9 +213,13 @@ class ExternalRecordRequestHandler(JsonRequestBase):
         Output:
         A list of ExternalRecord objects'''
         rid = kwargs.pop('id', None)
-
+        links = kwargs.pop('links', False)
         if rid:
             path = self.root_path + 'id/' + str(rid) + '/'
+            if links:
+                path += 'links/'
+                r = self.processGet(path)
+                return json.loads(r)
             return ExternalRecord.identity_from_json(self.processGet(path))
         else:
             def onProperKw(query_response, qdict):
@@ -281,6 +286,22 @@ class ExternalRecordRequestHandler(JsonRequestBase):
             er.created = RequestBase.dateTimeFromJsonString(o.get('created'))
             er.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
         return self.standardCreate(ExternalRecord, onSuccess, *externalRecords)
+
+    def link(self, externalRecord, relatedRecord, linkType):
+        '''Given one ExternalRecord, link another ExternalRecord to it
+        '''
+        path = self.root_path + 'id/' + str(externalRecord.id) + '/links/'
+        body = {
+            "related_record": relatedRecord.id,
+            "relation_type": linkType
+        }
+        return self.processPost(path, json.dumps(body))
+
+    def unlink(self, externalRecord, linkId):
+        '''Given one ExternalRecord and its link ID, remove the link to the relatedRecord
+        '''
+        path = self.root_path + 'id/' + str(externalRecord.id) + '/links/' + str(linkId) + '/'
+        return self.processDelete(path)
 
     def update(self, *externalRecords):
         '''Given an arbitrary number of ExternalRecord objects, this method attempts to update the externalrecords in the
