@@ -424,7 +424,7 @@ class TestExternalRecordHandler(ehbTestClass):
         ID
         '''
         r = self.er_rh.unlink(self.er1, 1)
-        self.assertTrue(json.loads(r)['success'])
+        self.assertTrue(r['success'])
 
     def testExternalRecordDeleteByPath(self):
         '''

@@ -295,13 +295,13 @@ class ExternalRecordRequestHandler(JsonRequestBase):
             "related_record": relatedRecord.id,
             "relation_type": linkType
         }
-        return self.processPost(path, json.dumps(body))
+        return json.loads(self.processPost(path, json.dumps(body)))
 
     def unlink(self, externalRecord, linkId):
         '''Given one ExternalRecord and its link ID, remove the link to the relatedRecord
         '''
         path = self.root_path + 'id/' + str(externalRecord.id) + '/links/' + str(linkId) + '/'
-        return self.processDelete(path)
+        return json.loads(self.processDelete(path))
 
     def update(self, *externalRecords):
         '''Given an arbitrary number of ExternalRecord objects, this method attempts to update the externalrecords in the
@@ -330,3 +330,16 @@ class ExternalRecordLabelRequestHandler(RequestHandler):
         response = self.sendRequest('POST', path, {'Content-Type': 'application/json'})
 
         return json.loads(response.read())
+
+class ExternalRecordRelationRequestHandler(RequestHandler):
+    def __init__(self, host, root_path='', secure=False, api_key=None):
+        RequestHandler.__init__(self, host, secure, api_key)
+        self.root_path = root_path
+
+    def get(self, **kwargs):
+        path = self.root_path + '/api/links/'
+        response = self.sendRequest('GET', path, {'Content-Type': 'application/json'})
+        try:
+            return json.loads(response.read())
+        except:
+            return None
