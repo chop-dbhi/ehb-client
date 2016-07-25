@@ -17,6 +17,8 @@ INSTALLED_APPS = (
 
 SITE_ID = 1
 
+EHB_LOG=0
+
 ANONYMOUS_USER_ID = -1
 
 TEST_RUNNER = 'tests.runner.ProfilingTestRunner'
