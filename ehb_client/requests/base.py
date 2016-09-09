@@ -18,11 +18,8 @@ class abstractstatic(staticmethod):
     __isabstractmethod__ = True
 
 
-class IdentityBase(object):
+class IdentityBase(object, metaclass=ABCMeta):
 
-    __metaclass__ = ABCMeta
-
-    # Abstract Methods
     @abstractstatic
     def findIdentity(searchTermsDict, *identities):
         pass
@@ -47,7 +44,7 @@ class IdentityBase(object):
         elif type(other).__name__ == 'NoneType':
             return False
         b = True
-        for k in self.__dict__.keys():
+        for k in list(self.__dict__.keys()):
             if k != 'modified' and k != 'created':
                 b = b and self.__dict__.get(k) == other.__dict__.get(k)
         return b
@@ -56,9 +53,7 @@ class IdentityBase(object):
         return not self.__eq__(other)
 
 
-class RequestBase(object):
-    __metaclass__ = ABCMeta
-
+class RequestBase(object, metaclass=ABCMeta):
     def __init__(self, host, root_path='', secure=False, api_key=None):
         self.host = host
         self.secure = secure
@@ -86,9 +81,9 @@ class RequestBase(object):
     def processResponse(self, response, path=''):
         status = response.status
         if status == 200:
-            return response.read()
+            return response.read().decode('utf-8')
         elif status == 204:
-            return response.read()
+            return response.read().decode('utf-8')
         elif status == 403:
             raise NotAuthorized
         elif status == 404:
@@ -145,13 +140,8 @@ class RequestBase(object):
         return hh + delim + mm + delim + ss
 
 
-class JsonRequestBase(RequestBase):
+class JsonRequestBase(RequestBase, metaclass=ABCMeta):
 
-    __metaclass__ = ABCMeta
-
-    # Abstract - does not implement get, delete, create, update
-
-    # Concrete
     accept_json = {'Accept': 'application/json'}
     content_type_json = {'Content-Type': 'application/json'}
 
@@ -206,7 +196,7 @@ class JsonRequestBase(RequestBase):
                 errors = []
 
                 for e in errs:
-                    for k in e.keys():
+                    for k in list(e.keys()):
                         errors.append(e.get(k))
 
                 status.append({
@@ -260,7 +250,7 @@ class JsonRequestBase(RequestBase):
                 errs = o.get('errors')
                 errors = []
                 for e in errs:
-                    for k in e.keys():
+                    for k in list(e.keys()):
                         errors.append(e.get(k))
                 status.append({identityBase.identityLabel: i, "success": False, "errors": errors})
         return status

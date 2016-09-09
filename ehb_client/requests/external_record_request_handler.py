@@ -120,7 +120,7 @@ class ExternalRecordRequestHandler(JsonRequestBase):
         body = '['
         for d in params:
             body += '{'
-            for k in d.keys():
+            for k in list(d.keys()):
                 body += '"'+k+'":"'+str(d.get(k))+'",'
             body = body[0:body.__len__()-1] + '},'
         body = body[0:body.__len__()-1] + ']'
@@ -321,15 +321,14 @@ class ExternalRecordLabelRequestHandler(RequestHandler):
         path = self.root_path + '/api/externalrecord/labels/{0}/'.format(lid)
         response = self.sendRequest('GET', path, {'Content-Type': 'application/json'})
         try:
-            return json.loads(response.read())
+            return json.loads(response.read().decode('utf-8'))
         except:
             return None
 
     def query(self, *params):
         path = self.root_path + '/api/externalrecord/labels/'
         response = self.sendRequest('POST', path, {'Content-Type': 'application/json'})
-
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 class ExternalRecordRelationRequestHandler(RequestHandler):
     def __init__(self, host, root_path='', secure=False, api_key=None):
@@ -340,6 +339,6 @@ class ExternalRecordRelationRequestHandler(RequestHandler):
         path = self.root_path + '/api/links/'
         response = self.sendRequest('GET', path, {'Content-Type': 'application/json'})
         try:
-            return json.loads(response.read())
+            return json.loads(response.read().decode('utf-8'))
         except:
             return None

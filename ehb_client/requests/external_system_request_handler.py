@@ -93,7 +93,7 @@ class ExternalSystemRequestHandler(JsonRequestBase):
         body = '['
         for d in params:
             body += '{'
-            for k in d.keys():
+            for k in list(d.keys()):
                 v = str(d.get(k))
                 if k == 'url':
                     v = ExternalSystem.correctUrl(v)

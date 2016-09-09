@@ -130,7 +130,7 @@ class SubjectRequestHandler(JsonRequestBase):
                 errs = o.get('errors')
                 errors = []
                 for e in errs:
-                    for k in e.keys():
+                    for k in list(e.keys()):
                         errors.append(e.get(k))
                 status.append({identityBase.identityLabel: i, "success": False, "errors": errors})
         return status

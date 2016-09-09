@@ -1,6 +1,6 @@
 from django.conf import settings
 
-import httplib
+import http.client
 import json
 import datetime
 import logging
@@ -27,9 +27,9 @@ class RequestHandler(object):
     def sendRequest(self, verb, path='', headers='', body=''):
         self.lastrequestbody = body
         if(self.secure):
-            c = httplib.HTTPSConnection(self.host)
+            c = http.client.HTTPSConnection(self.host)
         else:
-            c = httplib.HTTPConnection(self.host)
+            c = http.client.HTTPConnection(self.host)
         headers = self.append_key(headers)
         if settings.DEBUG or settings.EHB_LOG:
             ts = datetime.datetime.now()
