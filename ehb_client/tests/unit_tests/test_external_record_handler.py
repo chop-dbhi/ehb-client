@@ -83,6 +83,33 @@ def test_get(handler, mocker, external_record_get):
     assert isinstance(record, ExternalRecord)
 
 
+def test_get_proper_kwargs(handler, mocker, external_record_get, external_record_query):
+    ''' Attempts to get an ExternalRecord with keyword arguments
+    will result in a query to the eHB for that record
+    '''
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_record_query)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
+    record = handler.get(subject_id=1)
+    assert isinstance(record, ExternalRecord)
+
+
+def test_get_improper_kwargs(handler, mocker, external_record_get, external_record_query):
+    ''' Attempts to get an ExternalRecord with keyword arguments
+    will result in a query to the eHB for that record
+    '''
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_record_query)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
+    record = handler.get(subject_id=1)
+    assert isinstance(record, ExternalRecord)
+
+
+
 def test_query(handler, mocker, external_record_query):
     eHBResponse = mocker.MagicMock(
         status=200
@@ -101,3 +128,17 @@ def test_query_w_params(handler, mocker, external_record_query):
     handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
     records = handler.query({"subject_id": 1})[0]
     assert len(records['external_record']) == 2
+
+
+def test_query_error(handler, mocker, external_record_query_error):
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_record_query_error)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
+    records = handler.query()[0]
+    assert records['path'] == 'not_provided'
+    assert records['subject'] == 'not_provided'
+    assert not records['success']
+    assert {'id': 8} in records['errors']
+    assert records['external_system'] == 'not_provided'
