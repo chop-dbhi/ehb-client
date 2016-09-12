@@ -53,7 +53,7 @@ class Organization(IdentityBase):
 class OrganizationRequestHandler(JsonRequestBase):
 
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestBase.__init__(self, host, root_path+'/api/organization/', secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/organization/'.format(root_path), secure, api_key)
 
     def query(self, *names):
         '''
@@ -71,7 +71,7 @@ class OrganizationRequestHandler(JsonRequestBase):
         body = '['
         for n in names:
             body += '{"name":"' + n + '"},'
-        body = body[0:body.__len__()-1] + ']'
+        body = body[0:body.__len__() - 1] + ']'
         path = self.root_path + 'query/'
         response = self.processPost(path, body)
         status = []

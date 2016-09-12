@@ -89,41 +89,41 @@ class ExternalRecord(IdentityBase):
 class ExternalRecordRequestHandler(JsonRequestBase):
 
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestBase.__init__(self, host, root_path+'/api/externalrecord/', secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/externalrecord/'.format(root_path), secure, api_key)
 
     def query(self, *params):
         '''Attemps to locate a collection of external records in the ehb-service database:
         Inputs:
-        params is variable length number of dictionaries where each dictionary includes one or more sets of
-        identifiers. The query can be on any combination of Subject, ExternalSystem and path.
-        It is not necessary to specify all 3, but at least 1 must be provided.
-        -The allowed ExternalSystem identifiers are:
-        external_system_id = integer value of the external_system id
-        OR
-        external_system_name = string value of the external_systyem name
-        OR
-        external_system_url = string value of the external_system URL
-        -The allowed Subject identifiers are:
-        subject_id = integer value of the subject id
-        OR
-        subject_org = int value of the eHB Organization record id for this subject
-        subject_org_id = string value of the organization_subject_id for this Subject
-        -The allowed path identifier is path
-        example query({"subject_id":1, "external_system_id":2, "path":"thepath"},{"subject_id":2, "external_system_name":"somename"})
+            params is variable length number of dictionaries where each dictionary includes one or more sets of
+            identifiers. The query can be on any combination of Subject, ExternalSystem and path.
+            It is not necessary to specify all 3, but at least 1 must be provided.
+            -The allowed ExternalSystem identifiers are:
+            external_system_id = integer value of the external_system id
+            OR
+            external_system_name = string value of the external_systyem name
+            OR
+            external_system_url = string value of the external_system URL
+            -The allowed Subject identifiers are:
+            subject_id = integer value of the subject id
+            OR
+            subject_org = int value of the eHB Organization record id for this subject
+            subject_org_id = string value of the organization_subject_id for this Subject
+            -The allowed path identifier is path
+            example query({"subject_id":1, "external_system_id":2, "path":"thepath"},{"subject_id":2, "external_system_name":"somename"})
         Returns:
-        [dictionaries]
-        where each entry is of the form
-        {"external_system":value, "subject":"id":"value", "success":boolean, "external_record":[ExternalRecords objects]}
-        {"external_system":value, "subject":{"subject_org":"value", "subject_org_id":"value"}, "success":boolean, "external_record":[ExternalRecords objects]}
-        OR
-        {"external_system":value, "subject":value, "success":boolean, "errors":[error codes]}'''
+            [dictionaries]
+            where each entry is of the form
+            {"external_system":value, "subject":"id":"value", "success":boolean, "external_record":[ExternalRecords objects]}
+            {"external_system":value, "subject":{"subject_org":"value", "subject_org_id":"value"}, "success":boolean, "external_record":[ExternalRecords objects]}
+            OR
+            {"external_system":value, "subject":value, "success":boolean, "errors":[error codes]}'''
         body = '['
         for d in params:
             body += '{'
             for k in list(d.keys()):
-                body += '"'+k+'":"'+str(d.get(k))+'",'
-            body = body[0:body.__len__()-1] + '},'
-        body = body[0:body.__len__()-1] + ']'
+                body += '"{0}": "{1}",'.format(k, str(d.get(k)))
+            body = body[0:body.__len__() - 1] + '},'
+        body = body[0:body.__len__() - 1] + ']'
         path = self.root_path + 'query/'
         response = self.processPost(path, body)
         status = []
@@ -141,17 +141,27 @@ class ExternalRecordRequestHandler(JsonRequestBase):
                     }
             path = o.get('path', 'not_provided')
             if errors:
-                status.append({"external_system":es, "path":path, "subject":s, "success":False, "errors":errors})
+                status.append({
+                    "external_system": es,
+                    "path": path,
+                    "subject": s,
+                    "success": False,
+                    "errors": errors})
             else:
                 ers = o.get('external_record')
                 era = []
                 for er in ers:
                     era.append(ExternalRecord.identity_from_jsonObject(er))
-                status.append({"external_system":es, "path":path, "subject":s, "success":True, ExternalRecord.identityLabel:era})
+                status.append({
+                    "external_system": es,
+                    "path": path,
+                    "subject": s,
+                    "success": True,
+                    ExternalRecord.identityLabel: era})
         return status
 
     def __processAfterQueryOnKwargs(self, f_found, f_notfound, **kwargs):
-        subject_id = kwargs.pop('subject_id',None)
+        subject_id = kwargs.pop('subject_id', None)
         subject_org = kwargs.pop('subject_org', None)
         subject_org_id = kwargs.pop('subject_org_id', None)
         es_id = kwargs.pop('external_system_id', None)
@@ -310,6 +320,7 @@ class ExternalRecordRequestHandler(JsonRequestBase):
         def onSuccess(er, o):
             er.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
         return self.standardUpdate(ExternalRecord, onSuccess, *externalRecords)
+
 
 class ExternalRecordLabelRequestHandler(RequestHandler):
     def __init__(self, host, root_path='', secure=False, api_key=None):

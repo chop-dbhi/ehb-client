@@ -1,6 +1,6 @@
 from ehb_client.requests.base import JsonRequestBase, RequestBase, IdentityBase
 import json
-from ehb_client.requests.exceptions import PageNotFound, InvalidArguments
+from ehb_client.requests.exceptions import InvalidArguments
 from ehb_client.requests.subject_request_handler import Subject
 from ehb_client.requests.external_record_request_handler import ExternalRecord
 
@@ -30,7 +30,8 @@ class Group(IdentityBase):
         self._current_client_key = None
         self.id = id
 
-    def current_client_key(self, key): self._current_client_key = key
+    def current_client_key(self, key):
+        self._current_client_key = key
 
     @staticmethod
     def findIdentity(searchTermsDict, *identities):
@@ -82,7 +83,7 @@ class Group(IdentityBase):
 class GroupRequestHandler(JsonRequestBase):
 
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestBase.__init__(self, host, root_path+'/api/group/', secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/group/'.format(root_path), secure, api_key)
 
     def _process_by_id_or_name(self, func, **id_or_name):
         gid = id_or_name.pop('id', None)
@@ -147,7 +148,7 @@ class GroupRequestHandler(JsonRequestBase):
         body = '['
         for x in xs:
             body += str(x.id) + ','
-        body = body[0:len(body)-1] + ']'
+        body = body[0:len(body) - 1] + ']'
         response = self.processPost(ehb_service_path, body, headers)
         return json.loads(response)
 

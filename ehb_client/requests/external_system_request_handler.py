@@ -72,7 +72,7 @@ class ExternalSystem(IdentityBase):
 class ExternalSystemRequestHandler(JsonRequestBase):
 
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestBase.__init__(self, host, root_path+'/api/externalsystem/', secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/externalsystem/'.format(root_path), secure, api_key)
 
     def query(self, *params):
         '''
@@ -97,9 +97,9 @@ class ExternalSystemRequestHandler(JsonRequestBase):
                 v = str(d.get(k))
                 if k == 'url':
                     v = ExternalSystem.correctUrl(v)
-                body += '"'+k+'":"'+v+'",'
-            body = body[0:body.__len__()-1] + '},'
-        body = body[0:body.__len__()-1] + ']'
+                body += '"{0}": "{1}",'.format(k, v)
+            body = body[0:body.__len__() - 1] + '},'
+        body = body[0:body.__len__() - 1] + ']'
         path = self.root_path + 'query/'
         response = self.processPost(path, body)
         status = []

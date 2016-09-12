@@ -1,7 +1,6 @@
 from django.conf import settings
 
 import http.client
-import json
 import datetime
 import logging
 

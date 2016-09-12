@@ -78,7 +78,7 @@ class Subject(IdentityBase):
 class SubjectRequestHandler(JsonRequestBase):
 
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestBase.__init__(self, host, root_path+'/api/subject/', secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/subject/'.format(root_path), secure, api_key)
 
     def _read_and_action(self, func, **id_or_orgInfo):
         pk = id_or_orgInfo.pop("id", None)
@@ -116,8 +116,12 @@ class SubjectRequestHandler(JsonRequestBase):
             id = i.id
             old_subject = identityBase.json_from_identity(i.old_subject)
             new_subject = identityBase.json_from_identity(i)
-            body += '{"id":"'+str(id)+'","old_subject":'+old_subject+',"new_subject":'+new_subject+'},'
-        body = body[0:body.__len__()-1] + ']'
+            body += '{"id": "{0}","old_subject": {1},"new_subject": {2}},'.format(
+                str(id),
+                old_subject,
+                new_subject
+            )
+        body = body[0:body.__len__() - 1] + ']'
         response = self.processPut(path, body)
         status = []
         for o in json.loads(response):
