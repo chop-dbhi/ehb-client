@@ -6,3 +6,6 @@ MANIFEST
 dist
 profiled_tests.txt
 *.egg-info
+htmlcov
+.cache
+.coverage
