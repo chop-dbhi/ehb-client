@@ -30,18 +30,7 @@ class RequestHandler(object):
         else:
             c = http.client.HTTPConnection(self.host)
         headers = self.append_key(headers)
-        if settings.DEBUG or settings.EHB_LOG:
-            ts = datetime.datetime.now()
         c.request(verb, path, body, headers)
-        if settings.DEBUG or settings.EHB_LOG:
-            data = {
-                'path': path,
-                'response_time': (datetime.datetime.now() - ts).microseconds / 1000
-            }
-            log.debug("ehb request ({0}) {1}ms".format(
-                data['path'],
-                data['response_time']),
-                extra=data)
         r = c.getresponse()
         return r
 
