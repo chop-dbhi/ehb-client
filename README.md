@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/chop-dbhi/ehb-client.svg?style=svg)](https://circleci.com/gh/chop-dbhi/ehb-client)
+
 # Usage
 
 This python client can be used to query the ehb-service for information about subjects and external records. The client can only be used if the user possesses an API key to access the service.
