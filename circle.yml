@@ -1,15 +1,15 @@
 
 machine:
-    services:
-        - docker
+  python:
+      version: 3.5.1
 
 dependencies:
     override:
-        - pip install "Django<1.7"
-        - docker info
-        - docker pull dbhi/ehb-service
+        - pip install -r requirements-dev.txt
 
 test:
     override:
-        - docker run -d -p 8000:8000 dbhi/ehb-service; sleep 10
-        - python test_suite.py
+        - pip install -e .
+        - pytest -v --cov-report=html --cov=ehb_client ehb_client/tests/unit_tests
+    post:
+        - cp -r htmlcov $CIRCLE_ARTIFACTS/coverage
