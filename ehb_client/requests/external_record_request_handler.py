@@ -322,35 +322,55 @@ class ExternalRecordRequestHandler(JsonRequestBase):
         return self.standardUpdate(ExternalRecord, onSuccess, *externalRecords)
 
 
-class ExternalRecordLabelRequestHandler(RequestHandler):
+class ExternalRecordLabelRequestHandler(JsonRequestBase):
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestHandler.__init__(self, host, secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/externalrecord/'.format(root_path), secure, api_key)
         self.root_path = root_path
+
+    def create(*args, **kwargs):
+        pass
+
+    def delete(*args, **kwargs):
+        pass
+
+    def update(*args, **kwargs):
+        pass
 
     def get(self, **kwargs):
         lid = kwargs.pop('id', None)
         path = self.root_path + '/api/externalrecord/labels/{0}/'.format(lid)
-        response = self.sendRequest('GET', path, {'Content-Type': 'application/json'})
+        response = self.processGet(path, {'Content-Type': 'application/json'})
         try:
-            return json.loads(response.read().decode('utf-8'))
-        except:
-            return None
+            return json.loads(response)
+        except json.decoder.JSONDecodeError:
+            return {'error': 'invalid JSON received from eHB'}
 
     def query(self, *params):
         path = self.root_path + '/api/externalrecord/labels/'
-        response = self.sendRequest('POST', path, {'Content-Type': 'application/json'})
-        return json.loads(response.read().decode('utf-8'))
+        response = self.processPost(path, {'Content-Type': 'application/json'})
+        try:
+            return json.loads(response)
+        except json.decoder.JSONDecodeError:
+            return {'error': 'invalid JSON received from eHB'}
 
-
-class ExternalRecordRelationRequestHandler(RequestHandler):
+class ExternalRecordRelationRequestHandler(JsonRequestBase):
     def __init__(self, host, root_path='', secure=False, api_key=None):
-        RequestHandler.__init__(self, host, secure, api_key)
+        RequestBase.__init__(self, host, '{0}/api/externalrecord/'.format(root_path), secure, api_key)
         self.root_path = root_path
+
+    def create(*args, **kwargs):
+        pass
+
+    def delete(*args, **kwargs):
+        pass
+
+    def update(*args, **kwargs):
+        pass
 
     def get(self, **kwargs):
         path = self.root_path + '/api/links/'
-        response = self.sendRequest('GET', path, {'Content-Type': 'application/json'})
+        response = self.processGet(path, {'Content-Type': 'application/json'})
         try:
-            return json.loads(response.read().decode('utf-8'))
+            return json.loads(response)
         except:
-            return None
+            return {'error': 'invalid JSON received from eHB'}
