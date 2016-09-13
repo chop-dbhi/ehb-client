@@ -341,6 +341,7 @@ class ExternalRecordLabelRequestHandler(RequestHandler):
         response = self.sendRequest('POST', path, {'Content-Type': 'application/json'})
         return json.loads(response.read().decode('utf-8'))
 
+
 class ExternalRecordRelationRequestHandler(RequestHandler):
     def __init__(self, host, root_path='', secure=False, api_key=None):
         RequestHandler.__init__(self, host, secure, api_key)
