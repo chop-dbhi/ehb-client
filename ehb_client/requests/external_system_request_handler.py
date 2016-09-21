@@ -60,11 +60,13 @@ class ExternalSystem(IdentityBase):
 
     @staticmethod
     def json_from_identity(es):
-        q = '"'
-        n = '"name":"' + es.name + q
-        des = '"description":"' + es.description + q
-        u = '"url":"' + es.url + q
-        return '{' + n + ',' + des + ',' + u + '}'
+        obj = {
+            'id': es.id,
+            'name': es.name,
+            'description': es.description,
+            'url': es.url,
+        }
+        return json.dumps(obj)
 
     identityLabel = "external_system"
 
@@ -90,18 +92,15 @@ class ExternalSystemRequestHandler(JsonRequestBase):
         {"url":value, "success":True, "externalSystem":[ExternalSystem objects]}
         OR
         {"name":value, "success":False, "errors":[error codes]}'''
-        body = '['
+        body = []
         for d in params:
-            body += '{'
             for k in list(d.keys()):
                 v = str(d.get(k))
                 if k == 'url':
                     v = ExternalSystem.correctUrl(v)
-                body += '"{0}": "{1}",'.format(k, v)
-            body = body[0:body.__len__() - 1] + '},'
-        body = body[0:body.__len__() - 1] + ']'
+                body.append({k: v})
         path = self.root_path + 'query/'
-        response = self.processPost(path, body)
+        response = self.processPost(path, json.dumps(body))
         status = []
         for o in json.loads(response):
             errors = o.get("errors", None)
