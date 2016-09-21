@@ -39,3 +39,38 @@ def external_record_link():
 @pytest.fixture(scope='module')
 def external_record_update_response():
     return b'[{"created": "2015-9-29 13:51:16", "id": "1", "success": true, "modified": "2016-9-12 15:53:48"}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_get():
+    return b'{"description": "CHOP\'s REDCap Instance", "created": "2015-09-29 12:03:50.196000", "url": "https://redcap.chop.edu/api/", "modified": "2015-09-29 12:03:50.196000", "id": "1", "name": "REDCap"}'
+
+
+@pytest.fixture(scope='module')
+def external_system_query_url():
+    return b'[{"url": "http://example.com/noop/", "externalSystem": {"description": "Placeholder for external IDs", "created": "2016-01-10 15:35:41.311000", "url": "http://example.com/noop/", "modified": "2016-01-10 15:35:41.311000", "id": "3", "name": "External Identifiers"}}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_query_name():
+    return b'[{"externalSystem": {"description": "Placeholder for external IDs", "created": "2016-01-10 15:35:41.311000", "url": "http://example.com/noop/", "modified": "2016-01-10 15:35:41.311000", "id": "3", "name": "External Identifiers"}, "name": "External Identifiers"}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_query_not_found_url():
+    return b'[{"url": "http://ec", "errors": [{"Query": 9}]}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_query_not_found_name():
+    return b'[{"name": "foo", "errors": [{"Query": 9}]}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_get_records():
+    return b'[{"created": "2015-09-29 13:51:16.189000", "modified": "2015-09-29 13:51:16.190000", "label": 1, "record_id": "S891XSB0XD1NKRPF:I5CPQ07I5", "path": "Demo", "external_system": 1, "id": 1, "subject": 1}, {"created": "2015-09-29 13:51:16.189000", "modified": "2015-09-29 13:51:16.190000", "label": 1, "record_id": "S891XSB0XD1NKRPF:XM5VUKTNY", "path": "Demo", "external_system": 1, "id": 2, "subject": 1}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_get_subjects():
+    return b'[{"first_name": "John", "last_name": "Sample", "created": "2015-09-29 12:09:05.202000", "dob": "2000-01-01", "modified": "2015-09-29 12:09:05.202000", "organization_subject_id": "42424242", "organization": 1, "id": 1}]'
