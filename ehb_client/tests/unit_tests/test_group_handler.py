@@ -75,6 +75,7 @@ def test_identity_to_json_setck():
     assert isinstance(Obj, dict)
     assert Obj['current_client_key'] == 'newck'
 
+
 def test_dict_to_identity():
     Obj = {
         'name': "TestGroup",
@@ -108,3 +109,14 @@ def test_json_to_identity():
     ).identity_from_json(jsonStr)
     assert isinstance(group, Group)
     assert group.name == 'TestGroup'
+
+
+def test_get_by_id(handler, mocker, group_get_by_id):
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_get_by_id)
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.get(id=1)
+    print(res)
+    assert False

@@ -84,3 +84,8 @@ def external_system_create():
 @pytest.fixture(scope='module')
 def external_system_update():
     return b'[{"created": "2015-9-29 12:3:50", "id": "1", "success": true, "modified": "2016-9-21 21:5:56"}]'
+
+
+@pytest.fixture(scope='module')
+def group_get_by_id():
+    return b'{"ehb_key": "MKDKB9W48SLSFM4A", "description": "A BRP Protocol Group", "created": "2015-09-29 12:01:41.692000", "modified": "2015-09-29 12:01:41.692000", "is_locking": "True", "id": "1", "name": "BRP:M0536B4E2DDLA7W6"}'
