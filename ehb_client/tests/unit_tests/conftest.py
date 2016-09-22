@@ -74,3 +74,13 @@ def external_system_get_records():
 @pytest.fixture(scope='module')
 def external_system_get_subjects():
     return b'[{"first_name": "John", "last_name": "Sample", "created": "2015-09-29 12:09:05.202000", "dob": "2000-01-01", "modified": "2015-09-29 12:09:05.202000", "organization_subject_id": "42424242", "organization": 1, "id": 1}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_create():
+    return b'[{"name": "Test System", "created": "2016-9-21 20:31:13", "id": "4", "success": true, "modified": "2016-9-21 20:31:13"}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_update():
+    return b'[{"created": "2015-9-29 12:3:50", "id": "1", "success": true, "modified": "2016-9-21 21:5:56"}]'

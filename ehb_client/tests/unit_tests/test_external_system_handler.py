@@ -399,9 +399,38 @@ def test_delete_by_url_badname(handler, mocker, external_system_query_not_found_
         handler.delete(name='Non Existent')
 
 
-def test_delete_bad_params(handler, mocker):
-    eHBResponseQuery = mocker.MagicMock(
-        status=200
-    )
+def test_delete_bad_params(handler):
     with pytest.raises(exceptions.InvalidArguments):
         handler.delete(foo='bar')
+
+
+def test_create(handler, mocker, external_system_create):
+    ExSys = ExternalSystem(
+        id=4,
+        name='foo',
+        description='bar',
+        url='http://foo.com'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_system_create)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.create(ExSys)[0]
+    assert res['success']
+
+
+def test_update(handler, mocker, external_system_update):
+    ExSys = ExternalSystem(
+        id=1,
+        name='Updated External System',
+        description='foo',
+        url='http://bar.com'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_system_update)
+    handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.update(ExSys)[0]
+    assert res['success']
