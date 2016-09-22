@@ -419,7 +419,6 @@ def test_update_record(handler, mocker, external_record_update_response):
     eHBResponse.read = mocker.MagicMock(return_value=external_record_update_response)
     handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
     response = handler.update(ExRecObject)
-    print(response)
     assert isinstance(response[0]['external_record'], ExternalRecord)
     assert response[0]['success']
     assert not response[0]['errors']
