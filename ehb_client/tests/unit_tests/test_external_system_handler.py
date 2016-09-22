@@ -330,3 +330,78 @@ def test_get_external_system_by_bad_params(handler, mocker, external_system_quer
     handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
     with pytest.raises(exceptions.InvalidArguments):
         handler.get(foo='bar')
+
+
+def test_delete_by_id(handler, mocker):
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponse)
+    handler.delete(id=1)
+
+
+def test_delete_by_name(handler, mocker, external_system_query_name):
+    eHBResponseQuery = mocker.MagicMock(
+        status=200
+    )
+    eHBResponseQuery.read = mocker.MagicMock(return_value=external_system_query_name)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponseQuery)
+    eHBResponseDelete = mocker.MagicMock(
+        status=204
+    )
+    eHBResponseDelete.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponseDelete)
+    handler.delete(name='External Identifiers')
+
+
+def test_delete_by_url(handler, mocker, external_system_query_url):
+    eHBResponseQuery = mocker.MagicMock(
+        status=200
+    )
+    eHBResponseQuery.read = mocker.MagicMock(return_value=external_system_query_url)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponseQuery)
+    eHBResponseDelete = mocker.MagicMock(
+        status=204
+    )
+    eHBResponseDelete.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponseDelete)
+    handler.delete(url='http://example.com/noop/')
+
+
+def test_delete_by_url_badurl(handler, mocker, external_system_query_not_found_url):
+    eHBResponseQuery = mocker.MagicMock(
+        status=200
+    )
+    eHBResponseQuery.read = mocker.MagicMock(return_value=external_system_query_not_found_url)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponseQuery)
+    eHBResponseDelete = mocker.MagicMock(
+        status=204
+    )
+    eHBResponseDelete.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponseDelete)
+    with pytest.raises(exceptions.PageNotFound):
+        handler.delete(url='http://foo.com/noop/')
+
+
+def test_delete_by_url_badname(handler, mocker, external_system_query_not_found_name):
+    eHBResponseQuery = mocker.MagicMock(
+        status=200
+    )
+    eHBResponseQuery.read = mocker.MagicMock(return_value=external_system_query_not_found_name)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponseQuery)
+    eHBResponseDelete = mocker.MagicMock(
+        status=204
+    )
+    eHBResponseDelete.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponseDelete)
+    with pytest.raises(exceptions.PageNotFound):
+        handler.delete(name='Non Existent')
+
+
+def test_delete_bad_params(handler, mocker):
+    eHBResponseQuery = mocker.MagicMock(
+        status=200
+    )
+    with pytest.raises(exceptions.InvalidArguments):
+        handler.delete(foo='bar')
