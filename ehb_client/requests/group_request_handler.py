@@ -59,7 +59,7 @@ class Group(IdentityBase):
         lm = RequestBase.dateTimeFromJsonString(jsonObj.get('modified'))
         c = RequestBase.dateTimeFromJsonString(jsonObj.get('created'))
         gid = int(jsonObj.get('id'))
-        il = jsonObj.get('is_locking', 'false').lower() == 'true'
+        il = jsonObj.get('is_locking', False)
         ek = jsonObj.get('ehb_key')
         ck = None
         return Group(name=n, description=des, is_locking=il, ehb_key=ek,
@@ -67,17 +67,15 @@ class Group(IdentityBase):
 
     @staticmethod
     def json_from_identity(grp):
-        q = '"'
-        c = ','
-        n = '"name":"' + grp.name + q
-        des = '"description":"' + grp.description + q
-        il = '"is_locking":' + str(grp.is_locking).lower()
-        ck = '"client_key":"' + grp.client_key + q
-        body = '{' + n + c + des + c + il + c + ck
+        obj = {
+            'name': grp.name,
+            'description': grp.description,
+            'is_locking': grp.is_locking,
+            'client_key': grp.client_key,
+        }
         if grp._current_client_key:
-            body += c + '"current_client_key":"' + grp._current_client_key + q
-        body += '}'
-        return body
+            obj['current_client_key'] = grp._current_client_key
+        return json.dumps(obj)
 
 
 class GroupRequestHandler(JsonRequestBase):
