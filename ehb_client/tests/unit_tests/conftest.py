@@ -89,3 +89,33 @@ def external_system_update():
 @pytest.fixture(scope='module')
 def group_get_by_id():
     return b'{"ehb_key": "MKDKB9W48SLSFM4A", "description": "A BRP Protocol Group", "created": "2015-09-29 12:01:41.692000", "modified": "2015-09-29 12:01:41.692000", "is_locking": "True", "id": "1", "name": "BRP:M0536B4E2DDLA7W6"}'
+
+
+@pytest.fixture(scope='module')
+def group_get_subjects():
+    return b'[{"first_name": "John", "last_name": "Sample", "created": "2015-09-29 12:09:05.202000", "dob": "2000-01-01", "modified": "2015-09-29 12:09:05.202000", "organization_subject_id": "42424242", "organization": 1, "id": 1}]'
+
+
+@pytest.fixture(scope='module')
+def group_add_sub_to_group_success():
+    return b'[{"id": 1, "success": true}]'
+
+
+@pytest.fixture(scope='module')
+def group_get_group_records():
+    return b'[{"created": "2015-09-29 13:51:16.189000", "modified": "2015-09-29 13:51:16.190000", "label": 1, "record_id": "S891XSB0XD1NKRPF:I5CPQ07I5", "path": "Demo", "external_system": 1, "id": 1, "subject": 1}]'
+
+
+@pytest.fixture(scope='module')
+def group_create():
+    return b'[{"ehb_key": "6ZD44324ATZRXT0U", "name": "TestGroup", "success": true, "created": "2016-9-23 13:20:10", "modified": "2016-9-23 13:20:10", "id": "3"}]'
+
+
+@pytest.fixture(scope='module')
+def group_update():
+    return b'[{"ehb_key": "6ZD44324ATZRXT0U", "created": "2016-9-23 13:20:10", "id": "3", "success": true, "modified": "2016-9-23 13:36:29"}]'
+
+
+@pytest.fixture(scope='module')
+def group_update_name():
+    return b'[{"ehb_key": "6ZD44324ATZRXT0U", "created": "2016-9-23 13:20:10", "name": "Test Group", "success": true, "modified": "2016-9-23 13:36:29"}]'

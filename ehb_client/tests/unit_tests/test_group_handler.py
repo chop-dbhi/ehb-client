@@ -3,7 +3,8 @@ import json
 import datetime
 from ehb_client.requests.group_request_handler import Group, \
     GroupRequestHandler
-
+from ehb_client.requests.group_request_handler import Subject
+from ehb_client.requests.external_record_request_handler import ExternalRecord
 from ehb_client.requests import exceptions
 
 
@@ -118,5 +119,235 @@ def test_get_by_id(handler, mocker, group_get_by_id):
     eHBResponse.read = mocker.MagicMock(return_value=group_get_by_id)
     handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
     res = handler.get(id=1)
-    print(res)
-    assert False
+    assert res.id == 1
+    assert res.name == 'BRP:M0536B4E2DDLA7W6'
+
+
+def test_get_by_name(handler, mocker, group_get_by_id):
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_get_by_id)
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.get(name='BRP:M0536B4E2DDLA7W6')
+    assert res.id == 1
+    assert res.name == 'BRP:M0536B4E2DDLA7W6'
+
+
+def test_get_badparams(handler, mocker, group_get_by_id):
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_get_by_id)
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    with pytest.raises(exceptions.InvalidArguments):
+        handler.get(foo='bar')
+
+
+def test_get_group_subjects(handler, mocker, group_get_subjects):
+    grp = Group(
+        id=1,
+        name='BRP:M0536B4E2DDLA7W6',
+        description='Test Group',
+        is_locking=True,
+        client_key='testck'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_get_subjects)
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.get_subjects(grp)
+    assert len(res) == 1
+    assert res[0].first_name == 'John'
+    assert res[0].last_name == 'Sample'
+
+
+def test_add_subject_to_group(handler, mocker, group_add_sub_to_group_success):
+    grp = Group(
+        id=1,
+        name='BRP:M0536B4E2DDLA7W6',
+        description='Test Group',
+        is_locking=True,
+        client_key='testck'
+    )
+    sub = Subject(
+        id=2,
+        first_name='Jane',
+        last_name='Sample',
+        organization_id=1,
+        organization_subject_id='MRN123',
+        dob=datetime.datetime(1990, 1, 1),
+        modified=datetime.datetime(2015, 1, 1),
+        created=datetime.datetime(2015, 1, 1)
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_add_sub_to_group_success)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.add_subjects(grp, [sub])[0]
+    assert res['success']
+
+
+def test_remove_subject_from_group(handler, mocker):
+    grp = Group(
+        id=1,
+        name='BRP:M0536B4E2DDLA7W6',
+        description='Test Group',
+        is_locking=True,
+        client_key='testck'
+    )
+    sub = Subject(
+        id=2,
+        first_name='Jane',
+        last_name='Sample',
+        organization_id=1,
+        organization_subject_id='MRN123',
+        dob=datetime.datetime(1990, 1, 1),
+        modified=datetime.datetime(2015, 1, 1),
+        created=datetime.datetime(2015, 1, 1)
+    )
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponse)
+    handler.remove_subject(grp, sub)
+
+
+def test_get_records_from_group(handler, mocker, group_get_group_records):
+    grp = Group(
+        id=1,
+        name='BRP:M0536B4E2DDLA7W6',
+        description='Test Group',
+        is_locking=True,
+        client_key='testck'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_get_group_records)
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.get_records(grp)[0]
+    assert isinstance(res, ExternalRecord)
+
+
+def test_add_records_to_group(handler, mocker):
+    grp = Group(
+        id=1,
+        name='BRP:M0536B4E2DDLA7W6',
+        description='Test Group',
+        is_locking=True,
+        client_key='testck'
+    )
+    record = ExternalRecord(
+        id=1,
+        record_id='test'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'[{"id": 1, "success": true}]')
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.add_records(grp, [record])[0]
+    assert res['success']
+
+
+def test_remove_records_from_group(handler, mocker):
+    grp = Group(
+        id=1,
+        name='BRP:M0536B4E2DDLA7W6',
+        description='Test Group',
+        is_locking=True,
+        client_key='testck'
+    )
+    record = ExternalRecord(
+        id=1,
+        record_id='test'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponse)
+    handler.remove_record(grp, record)
+
+
+def test_delete_group_by_id(handler, mocker):
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponse)
+    handler.delete(id=1, client_key='testck')
+
+
+def test_delete_group_by_name(handler, mocker):
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponse)
+    handler.delete(name='BRP:M0536B4E2DDLA7W6', client_key='testck')
+
+
+def test_delete_group_nock(handler, mocker):
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=b'')
+    handler.request_handler.DELETE = mocker.MagicMock(return_value=eHBResponse)
+    with pytest.raises(exceptions.InvalidArguments):
+        handler.delete(name='BRP:M0536B4E2DDLA7W6')
+
+
+def test_create_group(handler, mocker, group_create):
+    grp = Group(
+        id=3,
+        name='Test Group',
+        description='a test group',
+        is_locking=True,
+        client_key='testck'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_create)
+    handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.create(grp)[0]
+    assert res['success']
+
+
+def test_create_update(handler, mocker, group_update):
+    grp = Group(
+        id=3,
+        name='Test Group',
+        description='a test group',
+        is_locking=True,
+        client_key='testck'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_update)
+    handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.update(grp)[0]
+    assert res['success']
+
+
+def test_create_update_name(handler, mocker, group_update_name):
+    grp = Group(
+        id=3,
+        name='Test Group',
+        description='a test group',
+        is_locking=True,
+        client_key='testclientkey'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=204
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=group_update_name)
+    handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.update(grp)[0]
+    assert res['success']
