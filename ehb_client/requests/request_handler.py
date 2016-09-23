@@ -1,7 +1,4 @@
-from django.conf import settings
-
-import http.client
-import datetime
+from http import client
 import logging
 
 log = logging.getLogger('ehb-client')
@@ -26,9 +23,9 @@ class RequestHandler(object):
     def sendRequest(self, verb, path='', headers='', body=''):
         self.lastrequestbody = body
         if(self.secure):
-            c = http.client.HTTPSConnection(self.host)
+            c = client.HTTPSConnection(self.host)
         else:
-            c = http.client.HTTPConnection(self.host)
+            c = client.HTTPConnection(self.host)
         headers = self.append_key(headers)
         c.request(verb, path, body, headers)
         r = c.getresponse()

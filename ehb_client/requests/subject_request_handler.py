@@ -113,14 +113,10 @@ class SubjectRequestHandler(JsonRequestBase):
         path = self.root_path
         body = '['
         for i in identities:
-            id = i.id
+            i.id
             old_subject = identityBase.json_from_identity(i.old_subject)
             new_subject = identityBase.json_from_identity(i)
-            body += '{"id": "{0}","old_subject": {1},"new_subject": {2}},'.format(
-                str(id),
-                old_subject,
-                new_subject
-            )
+            body += '{"id": "' + str(i.id) + '","old_subject": ' + old_subject + ',"new_subject": ' + new_subject + '},'
         body = body[0:body.__len__() - 1] + ']'
         response = self.processPut(path, body)
         status = []
