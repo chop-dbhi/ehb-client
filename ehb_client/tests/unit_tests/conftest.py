@@ -87,6 +87,16 @@ def external_system_update():
 
 
 @pytest.fixture(scope='module')
+def external_system_update_name():
+    return b'[{"created": "2015-9-29 12:3:50", "name": "Updated External System", "success": true, "modified": "2016-9-21 21:5:56"}]'
+
+
+@pytest.fixture(scope='module')
+def external_system_update_url():
+    return b'[{"created": "2015-9-29 12:3:50", "url": "http://bar.com/", "success": true, "modified": "2016-9-21 21:5:56"}]'
+
+
+@pytest.fixture(scope='module')
 def group_get_by_id():
     return b'{"ehb_key": "MKDKB9W48SLSFM4A", "description": "A BRP Protocol Group", "created": "2015-09-29 12:01:41.692000", "modified": "2015-09-29 12:01:41.692000", "is_locking": "True", "id": "1", "name": "BRP:M0536B4E2DDLA7W6"}'
 
@@ -119,3 +129,58 @@ def group_update():
 @pytest.fixture(scope='module')
 def group_update_name():
     return b'[{"ehb_key": "6ZD44324ATZRXT0U", "created": "2016-9-23 13:20:10", "name": "Test Group", "success": true, "modified": "2016-9-23 13:36:29"}]'
+
+
+@pytest.fixture(scope='module')
+def org_query_response():
+    return b'[{"organization": {"id": "1", "subject_id_label": "Record ID", "name": "Amazing Children\'s Hospital", "modified": "2015-09-29 12:01:11.191000", "created": "2015-09-29 12:01:11.191000"}, "name": "Amazing Children\'s Hospital"}]'
+
+
+@pytest.fixture(scope='module')
+def org_query_bad_response():
+    return b'[{"errors": [{"Query": 9}], "name": "foo"}]'
+
+
+@pytest.fixture(scope='module')
+def org_get():
+    return b'{"id": "1", "subject_id_label": "Record ID", "name": "Amazing Children\'s Hospital", "modified": "2015-09-29 12:01:11.191000", "created": "2015-09-29 12:01:11.191000"}'
+
+
+@pytest.fixture(scope='module')
+def org_create_response():
+    return b'[{"name": "Test Organization", "created": "2016-9-23 15:42:39", "id": "2", "success": true, "modified": "2016-9-23 15:42:39"}]'
+
+
+@pytest.fixture(scope='module')
+def org_update_response():
+    return b'[{"created": "2015-9-29 12:1:11", "id": "1", "success": true, "modified": "2016-9-23 15:46:12"}]'
+
+
+@pytest.fixture(scope='module')
+def subject_get_by_id():
+    return b'{"first_name": "John", "last_name": "Sample", "created": "2015-09-29 12:09:05.202000", "dob": "2000-01-01", "modified": "2015-09-29 12:09:05.202000", "organization_subject_id": "42424242", "organization": 1, "id": 1}'
+
+
+@pytest.fixture(scope='module')
+def subject_get_org_info():
+    return subject_get_by_id()
+
+
+@pytest.fixture(scope='module')
+def subject_create_response():
+    return b'[{"success": true, "created": "2016-9-23 16:32:11", "modified": "2016-9-23 16:32:11", "organization_id": 1, "organization_subject_id": "MRN123", "id": "2"}]'
+
+
+@pytest.fixture(scope='module')
+def subject_update_response():
+    return b'[{"created": "2016-9-23 16:32:11", "id": "2", "success": true, "modified": "2016-9-23 16:36:24"}]'
+
+
+@pytest.fixture(scope='module')
+def subject_update_response2():
+    return b'[{"created": "2016-9-23 16:32:11", "organization_id": "1", "organization_subject_id": "MRN123", "success": true, "modified": "2016-9-23 16:36:24"}]'
+
+
+@pytest.fixture(scope='module')
+def subject_update_badresponse():
+    return b'[{"errors": [{"id": 1}], "id": "34", "success": false}]'

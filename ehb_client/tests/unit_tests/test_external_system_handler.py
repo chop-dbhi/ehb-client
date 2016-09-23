@@ -434,3 +434,35 @@ def test_update(handler, mocker, external_system_update):
     handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
     res = handler.update(ExSys)[0]
     assert res['success']
+
+
+def test_update_name(handler, mocker, external_system_update_name):
+    ExSys = ExternalSystem(
+        id=1,
+        name='Updated External System',
+        description='foo',
+        url='http://bar.com'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_system_update_name)
+    handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.update(ExSys)[0]
+    assert res['success']
+
+
+def test_update_url(handler, mocker, external_system_update_url):
+    ExSys = ExternalSystem(
+        id=1,
+        name='Updated External System',
+        description='foo',
+        url='http://bar.com'
+    )
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=external_system_update_url)
+    handler.request_handler.PUT = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.update(ExSys)[0]
+    assert res['success']
