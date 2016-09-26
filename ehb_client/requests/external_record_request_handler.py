@@ -339,7 +339,7 @@ class ExternalRecordLabelRequestHandler(JsonRequestBase):
     def get(self, **kwargs):
         lid = kwargs.pop('id', None)
         path = self.root_path + '/api/externalrecord/labels/{0}/'.format(lid)
-        response = self.processGet(path, {'Content-Type': 'application/json'})
+        response = self.processGet(path, headers={'Content-Type': 'application/json'})
         try:
             return json.loads(response)
         except json.decoder.JSONDecodeError:
@@ -347,11 +347,12 @@ class ExternalRecordLabelRequestHandler(JsonRequestBase):
 
     def query(self, *params):
         path = self.root_path + '/api/externalrecord/labels/'
-        response = self.processPost(path, {'Content-Type': 'application/json'})
+        response = self.processPost(path, body='', headers={'Content-Type': 'application/json'})
         try:
             return json.loads(response)
         except json.decoder.JSONDecodeError:
             return {'error': 'invalid JSON received from eHB'}
+
 
 class ExternalRecordRelationRequestHandler(JsonRequestBase):
     def __init__(self, host, root_path='', secure=False, api_key=None):
