@@ -6,11 +6,13 @@ from ehb_client.requests.exceptions import InvalidArguments
 class Subject(IdentityBase):
 
     def __init__(self, first_name=None, last_name=None, organization_id=-1,
-                 organization_subject_id=-1, dob=-1, modified=None, created=None, id=-1):
+                 organization_subject_id=-1, organization_id_label='MRN',
+                 dob=-1, modified=None, created=None, id=-1):
         self.first_name = first_name
         self.last_name = last_name
         self.organization_id = organization_id  # eHB id of the associated Organization object
         self.organization_subject_id = organization_subject_id  # id used by the Organization for this subject
+        self.organization_id_label = organization_id_label
         self.dob = dob
         self.modified = modified
         self.created = created
@@ -37,13 +39,16 @@ class Subject(IdentityBase):
         ln = jsonObj.get('last_name')
         org_id = int(jsonObj.get('organization'))
         org_subj_id = jsonObj.get('organization_subject_id')
+        org_id_label = jsonObj.get('organization_id_label')
         dob = RequestBase.dateFromString(jsonObj.get('dob'))
         lm = RequestBase.dateTimeFromJsonString(jsonObj.get('modified'))
         c = RequestBase.dateTimeFromJsonString(jsonObj.get('created'))
         id = int(jsonObj.get('id'))
-        return Subject(first_name=fn, last_name=ln, organization_id=org_id,
-                       organization_subject_id=org_subj_id, dob=dob,
-                       modified=lm, created=c, id=id)
+        sub = Subject(first_name=fn, last_name=ln, organization_id=org_id,
+                      organization_subject_id=org_subj_id,
+                      organization_id_label=org_id_label, dob=dob,
+                      modified=lm, created=c, id=id)
+        return sub
 
     @staticmethod
     def identity_from_json(subjectJsonString):
@@ -61,6 +66,7 @@ class Subject(IdentityBase):
             'group_name': subject.group_name,
             'organization_subject_id': subject.organization_subject_id,
             'organization': subject.organization_id,
+            'organization_id_label': subject.organization_id_label,
             'dob': RequestBase.stringFromDate(subject.dob),
             'id': subject.id
         }
