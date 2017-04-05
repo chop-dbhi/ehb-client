@@ -81,3 +81,10 @@ It less likely an application would require this, but if for some reason an appl
 
     # We can now get the Subject Record the same as before by using the ext_rec.subject_id
 ```
+
+### Testing
+
+```bash
+pip install - e.
+pytest ehb_client/test/unit_tests
+```
