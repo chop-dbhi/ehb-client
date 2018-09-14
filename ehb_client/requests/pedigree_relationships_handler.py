@@ -1,7 +1,8 @@
 from ehb_client.requests.base import JsonRequestBase, RequestBase, IdentityBase
-from ehb_client.requests.request_handler import RequestHandler
-import json
-from ehb_client.requests.exceptions import PageNotFound, InvalidArguments
+# from ehb_client.requests.request_handler import RequestHandler
+# import json
+# from ehb_client.requests.exceptions import PageNotFound, InvalidArguments
+
 
 class PedigreeRelationship(IdentityBase):
     def __init__(self, subject_1, subject_2, subject_1_role,
@@ -24,8 +25,12 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
     def get(self, **kwargs):
         pass
 
-    def create(self, **kwargs):
-        pass
+    def create(self, *relationships):
+        def onSuccess(er, o):
+            er.id = int(o.get('id'))
+            er.created = RequestBase.dateTimeFromJsonString(o.get('created'))
+            er.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
+        return self.standardCreate(PedigreeRelationship, onSuccess, *relationships)
 
     def update(self, **kwargs):
         pass
