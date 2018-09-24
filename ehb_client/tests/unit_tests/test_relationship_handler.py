@@ -5,6 +5,7 @@ from ehb_client.requests.request_handler import client
 from ehb_client.requests.pedigree_relationships_handler import PedigreeRelationship, \
     PedigreeRelationshipRequestHandeler
 
+
 @pytest.fixture(scope='module')
 def handler():
     return PedigreeRelationshipRequestHandeler(
@@ -34,7 +35,7 @@ def test_create(handler, mocker, relationship_create_response):
     handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
     res = handler.create(pedigree)[0]
     assert res['success']
-    assert isinstance(res['pedigree'], )
+    assert isinstance(res['PedigreeRelationship'], PedigreeRelationship)
 
 # TODO update for get relationships for given subject
 # def test_get_by_id(handler, mocker, subject_get_by_id):
