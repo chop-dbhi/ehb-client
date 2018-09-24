@@ -186,7 +186,25 @@ def subject_update_badresponse():
     return b'[{"errors": [{"id": 1}], "id": "34", "success": false}]'
 
 
-# TODO update the following fields: subject_1, subject_1_role, subject_2, subject_2_role, protocol_id, id
 @pytest.fixture(scope='module')
 def relationship_create_response():
     return b'[{"success": true, "created": "2018-9-21 15:0:22", "subject_1_role": 1, "protocol_id": "1", "modified": "2018-9-21 15:0:22", "subject_1": 2, "subject_2_role": 4, "id": "1"}]'
+
+
+@pytest.fixture(scope='module')
+def relationship_get_by_subject():
+    return b'['\
+        '{"related_subject_id": 2,'\
+        '"related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
+        '"related_subject_org_id": "JULYTEST",'\
+        '"role": "Brother",'\
+        '"subject_id": 1,'\
+        '"subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
+        '"subject_org_id": "MRN123"},'\
+        '{"related_subject_id": 1,'\
+        '"related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
+        '"related_subject_org_id": "MRN123",'\
+        '"role": "Sister",'\
+        '"subject_id": 2,'\
+        '"subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
+        '"subject_org_id": "JULYTEST"}]'
