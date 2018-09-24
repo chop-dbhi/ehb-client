@@ -9,7 +9,6 @@ import json
 class PedigreeRelationship(IdentityBase):
     def __init__(self, subject_1, subject_2, subject_1_role,
                  subject_2_role, protocol_id, modified=None, created=None, id=-1):
-
         self.subject_1 = subject_1
         self.subject_2 = subject_2
         self.subject_1_role = subject_1_role
@@ -21,7 +20,11 @@ class PedigreeRelationship(IdentityBase):
 
     @staticmethod
     def findIdentity(searchTermsDict, *identities):
-        pass
+        id = searchTermsDict.get("id", None)
+        if id:
+            for p in identities:
+                if p.id == int(id):
+                    return p
 
     @staticmethod
     def identity_from_jsonObject(jsonObj):
@@ -59,26 +62,26 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
         RequestBase.__init__(self, host, '{0}/api/pedigree/'.format(root_path), secure, api_key)
 
     # TODO update this for relationships - used to get added elements needed for URL request
-    def _read_and_action(self, func, **sub_id_or_protocol_id):
-        pk = sub_id_or_protocol_id.pop("id", None)
-        if pk:
-            path = self.root_path + 'id/' + str(pk) + '/'
-            return func(path)
-        org_id = sub_id_or_protocol_id.pop('organization_id', None)
-        org_subj_id = sub_id_or_protocol_id.pop('organization_subject_id', None)
-        if org_id and org_subj_id:
-            path = self.root_path + 'organization/' + str(org_id) + '/osid/' + org_subj_id + '/'
-            return func(path)
-        raise InvalidArguments("id OR organization_id AND organization_subject_id")
+    # def _read_and_action(self, func, **sub_id_or_protocol_id):
+    #     pk = sub_id_or_protocol_id.pop("id", None)
+    #     if pk:
+    #         path = self.root_path + 'id/' + str(pk) + '/'
+    #         return func(path)
+    #     org_id = sub_id_or_protocol_id.pop('organization_id', None)
+    #     org_subj_id = sub_id_or_protocol_id.pop('organization_subject_id', None)
+    #     if org_id and org_subj_id:
+    #         path = self.root_path + 'organization/' + str(org_id) + '/osid/' + org_subj_id + '/'
+    #         return func(path)
+    #     raise InvalidArguments("id OR organization_id AND organization_subject_id")
 
     def get(self, **kwargs):
         pass
 
     def create(self, *relationships):
-        def onSuccess(er, o):
+        def onSuccess(p, o):
             # er.id = int(o.get('id'))
-            er.created = RequestBase.dateTimeFromJsonString(o.get('created'))
-            er.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
+            p.created = RequestBase.dateTimeFromJsonString(o.get('created'))
+            p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
         return self.standardCreate(PedigreeRelationship, onSuccess, *relationships)
 
     def update(self, **kwargs):
