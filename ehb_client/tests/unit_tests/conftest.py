@@ -1,4 +1,5 @@
 import pytest
+import json
 
 
 @pytest.fixture(scope='module')
@@ -193,18 +194,18 @@ def relationship_create_response():
 
 @pytest.fixture(scope='module')
 def relationship_get_by_subject():
-    return b'['\
-        '{"related_subject_id": 2,'\
-        '"related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
-        '"related_subject_org_id": "JULYTEST",'\
-        '"role": "Brother",'\
-        '"subject_id": 1,'\
-        '"subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
-        '"subject_org_id": "MRN123"},'\
-        '{"related_subject_id": 1,'\
-        '"related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
-        '"related_subject_org_id": "MRN123",'\
-        '"role": "Sister",'\
-        '"subject_id": 2,'\
-        '"subject_org": "AMAZING CHILDREN\'S HOSPITAL",'\
-        '"subject_org_id": "JULYTEST"}]'
+    json_string = """{"related_subject_id": 2,
+                "related_subject_org": "AMAZING CHILDREN'S HOSPITAL",
+                "related_subject_org_id": "JULYTEST",
+                "role": "Brother",
+                "subject_id": 1,
+                "subject_org": "AMAZING CHILDREN\'S HOSPITAL",
+                "subject_org_id": "MRN123"},
+                {"related_subject_id": 1,
+                "related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",
+                "related_subject_org_id": "MRN123",
+                "role": "Sister",
+                "subject_id": 2,
+                "subject_org": "AMAZING CHILDREN\'S HOSPITAL",
+                "subject_org_id": "JULYTEST"} """
+    return json_string.encode()
