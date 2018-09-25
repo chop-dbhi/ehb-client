@@ -206,7 +206,7 @@ def relationship_get_by_subject():
                 "related_subject_org_id": "MRN123",
                 "role": "Sister",
                 "subject_id": 2,
-                "subject_org": "AMAZING CHILDREN\'S HOSPITAL",
+                "subject_org": "AMAZING CHILDREN'S HOSPITAL",
                 "subject_org_id": "JULYTEST"}] """)
     json_string = json.dumps(json_response)
     return json_string.encode()
