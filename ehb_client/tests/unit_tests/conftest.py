@@ -210,3 +210,8 @@ def relationship_get_by_subject():
                 "subject_org_id": "JULYTEST"}] """)
     json_string = json.dumps(json_response)
     return json_string.encode()
+
+
+@pytest.fixture(scope='module')
+def relationship_get_by_protocol():
+    return relationship_get_by_subject()
