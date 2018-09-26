@@ -1,9 +1,6 @@
 from ehb_client.requests.base import JsonRequestBase, RequestBase, IdentityBase
 from ehb_client.requests.exceptions import InvalidArguments
 import json
-# from ehb_client.requests.request_handler import RequestHandler
-# import json
-# from ehb_client.requests.exceptions import PageNotFound, InvalidArguments
 
 
 class PedigreeRelationship(IdentityBase):
@@ -79,18 +76,16 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
     def __init__(self, host, root_path='', secure=False, api_key=None):
         RequestBase.__init__(self, host, '{0}/api/pedigree/'.format(root_path), secure, api_key)
 
-    # TODO update this for relationships - used to get added elements needed for URL request
     def _read_and_action(self, func, **subid_or_protocolid):
-        # pk = subid_or_protocolid.pop("id", None)
-        # if pk:
-        #     path = self.root_path + 'id/' + str(pk) + '/'
-        #     return func(path)
         subject_id = subid_or_protocolid.pop('subject_id', None)
         protocol_id = subid_or_protocolid.pop('protocol_id', None)
         if subject_id:
             path = self.root_path + 'subject_id/' + str(subject_id) + '/'
             return func(path)
-        raise InvalidArguments("id OR organization_id AND organization_subject_id")
+        if protocol_id:
+            path = self.root_path + 'protocol_id/' + str(protocol_id) + '/'
+            return func(path)
+        raise InvalidArguments("subject id or protocol id required")
 
     def get(self, **subid_or_protocolid):
         '''
@@ -104,7 +99,6 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
 
     def create(self, *relationships):
         def onSuccess(p, o):
-            # er.id = int(o.get('id'))
             p.created = RequestBase.dateTimeFromJsonString(o.get('created'))
             p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
         return self.standardCreate(PedigreeRelationship, onSuccess, *relationships)
