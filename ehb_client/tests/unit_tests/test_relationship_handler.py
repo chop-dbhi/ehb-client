@@ -16,7 +16,6 @@ def handler():
     )
 
 
-# TODO update for relationships.
 def test_create(handler, mocker, relationship_create_response):
     eHBResponse = mocker.MagicMock(
         status=200
@@ -35,10 +34,9 @@ def test_create(handler, mocker, relationship_create_response):
     handler.request_handler.POST = mocker.MagicMock(return_value=eHBResponse)
     res = handler.create(pedigree)[0]
     assert res['success']
-    assert isinstance(res['PedigreeRelationship'], PedigreeRelationship)
+    assert isinstance(res['pedigreeRelationship'], PedigreeRelationship)
 
 
-# TODO update for get relationships for given subject
 def test_get_by_subject(handler, mocker, relationship_get_by_subject):
     eHBResponse = mocker.MagicMock(
         status=200
