@@ -197,14 +197,14 @@ def relationship_get_by_subject():
     json_response = json.loads("""[{"related_subject_id": 2,\
                 "related_subject_org": "AMAZING CHILDREN'S HOSPITAL",\
                 "related_subject_org_id": "JULYTEST",\
-                "role": "Brother",
+                "role": "3",
                 "subject_id": 1,
-                "subject_org": "AMAZING CHILDREN\'S HOSPITAL",
+                "subject_org": "AMAZING CHILDREN'S HOSPITAL",
                 "subject_org_id": "MRN123"},
                 {"related_subject_id": 1,
                 "related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",
                 "related_subject_org_id": "MRN123",
-                "role": "Sister",
+                "role": "2",
                 "subject_id": 2,
                 "subject_org": "AMAZING CHILDREN'S HOSPITAL",
                 "subject_org_id": "JULYTEST"}] """)
