@@ -8,7 +8,7 @@ import json
 
 class PedigreeRelationship(IdentityBase):
     def __init__(self, subject_1, subject_2, subject_1_role,
-                 subject_2_role, protocol_id, modified=None, created=None, id=-1):
+                 subject_2_role, protocol_id=None, modified=None, created=None, id=-1):
         self.subject_1 = subject_1
         self.subject_2 = subject_2
         self.subject_1_role = subject_1_role
@@ -28,11 +28,29 @@ class PedigreeRelationship(IdentityBase):
 
     @staticmethod
     def identity_from_jsonObject(jsonObj):
-        pass
+        index = 0
+        # because each relationship is represented as two objects we must combine
+        # the two objects to collect all relationship details.
+        while index < len(jsonObj):
+            subject_1 = int(jsonObj[index]['subject_id'])
+            subject_2 = int(jsonObj[index]['related_subject_id'])
+            subject_1_role = int(jsonObj[index]['role'])
+            subject_2_role = int(jsonObj[index + 1]['role'])
+            # protocol_id = jsonObj.get('protocol_id') TODO: add protocol in service
+            # modified = RequestBase.dateTimeFromJsonString(jsonObj[index]['modified']) TODO: add modified in service
+            # created = RequestBase.dateTimeFromJsonString(jsonObj[index]['created']) TODO: add Created in service
+            # id = int(jsonObj.get('id')) TODO: add id in service
+            index = index + 2
+        relationship = PedigreeRelationship(subject_1=subject_1,
+                                            subject_2=subject_2,
+                                            subject_1_role=subject_1_role,
+                                            subject_2_role=subject_2_role)
+        return relationship
 
     @staticmethod
     def identity_from_json(pedigreeJsonString):
-        pass
+        jsonObj = json.loads(pedigreeJsonString)
+        return PedigreeRelationship.identity_from_jsonObject(jsonObj)
 
     @staticmethod
     def json_from_identity(pedigree):
@@ -54,7 +72,7 @@ class PedigreeRelationship(IdentityBase):
 
         return json.dumps(o)
 
-    identityLabel = "PedigreeRelationship"
+    identityLabel = "pedigreeRelationship"
 
 
 class PedigreeRelationshipRequestHandeler(JsonRequestBase):
@@ -62,20 +80,27 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
         RequestBase.__init__(self, host, '{0}/api/pedigree/'.format(root_path), secure, api_key)
 
     # TODO update this for relationships - used to get added elements needed for URL request
-    # def _read_and_action(self, func, **sub_id_or_protocol_id):
-    #     pk = sub_id_or_protocol_id.pop("id", None)
-    #     if pk:
-    #         path = self.root_path + 'id/' + str(pk) + '/'
-    #         return func(path)
-    #     org_id = sub_id_or_protocol_id.pop('organization_id', None)
-    #     org_subj_id = sub_id_or_protocol_id.pop('organization_subject_id', None)
-    #     if org_id and org_subj_id:
-    #         path = self.root_path + 'organization/' + str(org_id) + '/osid/' + org_subj_id + '/'
-    #         return func(path)
-    #     raise InvalidArguments("id OR organization_id AND organization_subject_id")
+    def _read_and_action(self, func, **subid_or_protocolid):
+        # pk = subid_or_protocolid.pop("id", None)
+        # if pk:
+        #     path = self.root_path + 'id/' + str(pk) + '/'
+        #     return func(path)
+        subject_id = subid_or_protocolid.pop('subject_id', None)
+        protocol_id = subid_or_protocolid.pop('protocol_id', None)
+        if subject_id:
+            path = self.root_path + 'subject_id/' + str(subject_id) + '/'
+            return func(path)
+        raise InvalidArguments("id OR organization_id AND organization_subject_id")
 
-    def get(self, **kwargs):
-        pass
+    def get(self, **subid_or_protocolid):
+        '''
+        Given a id = subject id integer
+        OR protocol_id = string
+        this method polls the server for the relationships.
+        '''
+        def func(path):
+            return PedigreeRelationship.identity_from_json(self.processGet(path))
+        return self._read_and_action(func, **subid_or_protocolid)
 
     def create(self, *relationships):
         def onSuccess(p, o):
