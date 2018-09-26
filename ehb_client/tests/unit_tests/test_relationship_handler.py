@@ -47,13 +47,13 @@ def test_get_by_subject(handler, mocker, relationship_get_by_subject):
     assert isinstance(res, PedigreeRelationship)
     assert res.subject_1 == 1
 
-# # TODO update for get relationships for given protocol
-# def test_get_by_id(handler, mocker, subject_get_by_id):
-#     eHBResponse = mocker.MagicMock(
-#         status=200
-#     )
-#     eHBResponse.read = mocker.MagicMock(return_value=subject_get_by_id)
-#     handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
-#     res = handler.get(id=1)
-#     assert isinstance(res, Subject)
-#     assert res.first_name == 'John'
+
+def test_get_by_protocol_id(handler, mocker, relationship_get_by_protocol):
+    eHBResponse = mocker.MagicMock(
+        status=200
+    )
+    eHBResponse.read = mocker.MagicMock(return_value=relationship_get_by_protocol)
+    handler.request_handler.GET = mocker.MagicMock(return_value=eHBResponse)
+    res = handler.get(protocol_id=1)
+    assert isinstance(res, PedigreeRelationship)
+    assert res.subject_1 == 1
