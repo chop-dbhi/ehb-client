@@ -99,8 +99,10 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
 
     def create(self, *relationships):
         def onSuccess(p, o):
-            p.created = RequestBase.dateTimeFromJsonString(o.get('created'))
-            p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
+            # TODO getting created and modified cause NoneType error
+            # p.created = RequestBase.dateTimeFromJsonString(o.get('created'))
+            # p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
+            pass
         return self.standardCreate(PedigreeRelationship, onSuccess, *relationships)
 
     def update(self, **kwargs):
