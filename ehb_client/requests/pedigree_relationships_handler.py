@@ -25,7 +25,6 @@ class PedigreeRelationship(IdentityBase):
 
     @staticmethod
     def identity_from_jsonObject(jsonObj):
-        print("we are in identity from jsonObject")
         relationships = []
         index = 0
         # because each relationship is represented as two objects we must combine
@@ -33,8 +32,6 @@ class PedigreeRelationship(IdentityBase):
         while index < len(jsonObj):
             subject_1 = int(jsonObj[index]['subject_id'])
             subject_2 = int(jsonObj[index]['related_subject_id'])
-            # subject_1_role = int(jsonObj[index]['role'])
-            # subject_2_role = int(jsonObj[index + 1]['role'])
             subject_1_role = jsonObj[index]['role']
             subject_2_role = jsonObj[index + 1]['role']
             # protocol_id = jsonObj.get('protocol_id') TODO: add protocol in service
@@ -42,7 +39,6 @@ class PedigreeRelationship(IdentityBase):
             # created = RequestBase.dateTimeFromJsonString(jsonObj[index]['created']) TODO: add Created in service
             # id = int(jsonObj.get('id')) TODO: add id in service
             index = index + 2
-            print("we processed one relationship")
             relationships.append(PedigreeRelationship(subject_1=subject_1,
                                                       subject_2=subject_2,
                                                       subject_1_role=subject_1_role,
@@ -52,42 +48,12 @@ class PedigreeRelationship(IdentityBase):
 
     @staticmethod
     def identity_from_json(pedigreeJsonString):
-        print("are we getting to identity from json?")
-        print(pedigreeJsonString)
-        # for relationship in pedigreeJsonString:
-        #     jsonObj = json.loads(relationship)
         jsonObj = json.loads(pedigreeJsonString)
-        print("are we getting jsonObj?")
-        # TODO: here is the problem
-        # does not work
-        # relationships = []
-        # for pedigree in pedigreeJsonString:
-        #     relationships.append(PedigreeRelationship.identity_from_jsonObject(jsonObj))
-        #
-        # return relationships
-        # end does not work
         return PedigreeRelationship.identity_from_jsonObject(jsonObj)
 
     @staticmethod
     def json_from_identity(pedigree):
-        print("are we failing in json from identity")
-        print(pedigree)
-        # working to get one relationship
-        # o = {}
-        # o = {
-        #     'subject_1': pedigree.subject_1,
-        #     'subject_2': pedigree.subject_2,
-        #     'subject_1_role': pedigree.subject_1_role,
-        #     'subject_2_role': pedigree.subject_2_role,
-        #     'protocol_id': pedigree.protocol_id,
-        #     'id': pedigree.id
-        # }
-        # end working to get one relationship
-
-        # TODO: This is the problem - we need to get more than one relationship in this dictionary
-        print(type(pedigree))
         if type(pedigree) is list:
-            index = 0
             o = []
             for relationship in pedigree:
                 o.append({
@@ -98,13 +64,7 @@ class PedigreeRelationship(IdentityBase):
                     "protocol_id": relationship.protocol_id,
                     "id": relationship.id
                 })
-                index += 1
-                print(index)
-                print(*o)
-                print("we just processed a relationship in json_from_identity")
-                print(relationship.subject_2)
         else:
-            print("we are not entering else in json from identity")
             o = {}
             o = {
                 'subject_1': pedigree.subject_1,
@@ -114,29 +74,6 @@ class PedigreeRelationship(IdentityBase):
                 'protocol_id': pedigree.protocol_id,
                 'id': pedigree.id
             }
-
-
-        # Not working
-        # o = []
-        # for relationship in pedigree:
-        #     o.append({
-        #         'subject_1': relationship.subject_1,
-        #         'subject_2': relationship.subject_2,
-        #         'subject_1_role': relationship.subject_1_role,
-        #         'subject_2_role': relationship.subject_2_role,
-        #         'protocol_id': relationship.protocol_id,
-        #         'id': relationship.id
-        #     })
-        # end not working
-
-        # if pedigree.modified:
-        #     o['modified'] = pedigree.modified.strftime('%Y-%m-%d %H:%M:%S.%f')
-        # if pedigree.created:
-        #     o['created'] = pedigree.created.strftime('%Y-%m-%d %H:%M:%S.%f')
-        o.append("this works for some reason")
-        print("This is O")
-        print(*o)
-        # print(json.dumps(pedigree))
         return json.dumps(o)
 
     identityLabel = "pedigreeRelationship"
@@ -163,17 +100,9 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
         OR protocol_id = string
         this method polls the server for the relationships.
         '''
-        # Kinda working but I think we can simplify
         def func(path):
-            print("return from ehb get relationship")
-            print(PedigreeRelationship.identity_from_json(self.processGet(path)))
             return PedigreeRelationship.identity_from_json(self.processGet(path))
         return self._read_and_action(func, **subid_or_protocolid)
-        # end of kinda working
-
-
-
-
 
     def create(self, *relationships):
         def onSuccess(p, o):
