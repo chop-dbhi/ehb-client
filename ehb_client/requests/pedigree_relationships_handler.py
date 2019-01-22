@@ -4,10 +4,12 @@ import json
 
 
 class PedigreeRelationship(IdentityBase):
-    def __init__(self, subject_1, subject_2, subject_1_role,
+    def __init__(self, subject_1_id, subject_1_org_id, subject_2_id, subject_2_org_id, subject_1_role,
                  subject_2_role, protocol_id=None, modified=None, created=None, id=-1):
-        self.subject_1 = subject_1
-        self.subject_2 = subject_2
+        self.subject_1_id = subject_1_id
+        self.subject_1_org_id = subject_1_org_id
+        self.subject_2 = subject_2_id
+        self.subject_2_org_id = subject_2_org_id
         self.subject_1_role = subject_1_role
         self.subject_2_role = subject_2_role
         self.protocol_id = protocol_id
@@ -30,19 +32,25 @@ class PedigreeRelationship(IdentityBase):
         # because each relationship is represented as two objects we must combine
         # the two objects to collect all relationship details.
         while index < len(jsonObj):
-            subject_1 = int(jsonObj[index]['subject_id'])
-            subject_2 = int(jsonObj[index]['related_subject_id'])
+            subject_1_id = int(jsonObj[index]['subject_id'])
+            subject_1_org_id = jsonObj[index]['subject_org_id']
+            subject_2_id = int(jsonObj[index]['related_subject_id'])
+            subject_2_org_id = jsonObj[index]['related_subject_org_id']
             subject_1_role = jsonObj[index]['role']
             subject_2_role = jsonObj[index + 1]['role']
+            id = -1
             # protocol_id = jsonObj.get('protocol_id') TODO: add protocol in service
             # modified = RequestBase.dateTimeFromJsonString(jsonObj[index]['modified']) TODO: add modified in service
             # created = RequestBase.dateTimeFromJsonString(jsonObj[index]['created']) TODO: add Created in service
             # id = int(jsonObj.get('id')) TODO: add id in service
             index = index + 2
-            relationships.append(PedigreeRelationship(subject_1=subject_1,
-                                                      subject_2=subject_2,
+            relationships.append(PedigreeRelationship(subject_1_id=subject_1_id,
+                                                      subject_1_org_id=subject_1_org_id,
+                                                      subject_2_id=subject_2_id,
+                                                      subject_2_org_id=subject_2_org_id,
                                                       subject_1_role=subject_1_role,
-                                                      subject_2_role=subject_2_role))
+                                                      subject_2_role=subject_2_role,
+                                                      id=id)),
 
         return relationships
 
@@ -57,8 +65,10 @@ class PedigreeRelationship(IdentityBase):
             o = []
             for relationship in pedigree:
                 o.append({
-                    "subject_1": relationship.subject_1,
-                    "subject_2": relationship.subject_2,
+                    "subject_1_id": relationship.subject_1_id,
+                    "subject_1_org_id": relationship.subject_1_org_id,
+                    "subject_2_id": relationship.subject_2,
+                    "subject_2_org_id": relationship.subject_2_org_id,
                     "subject_1_role": relationship.subject_1_role,
                     "subject_2_role": relationship.subject_2_role,
                     "protocol_id": relationship.protocol_id,
