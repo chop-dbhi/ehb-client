@@ -4,11 +4,11 @@ import json
 
 
 class PedigreeRelationship(IdentityBase):
-    def __init__(self, subject_1_id, subject_1_org_id, subject_2_id, subject_2_org_id, subject_1_role,
-                 subject_2_role, protocol_id=None, modified=None, created=None, id=-1):
+    def __init__(self, subject_1_id, subject_2_id, subject_1_role, subject_2_role,
+                 protocol_id=None, modified=None, created=None, id=-1, subject_2_org_id=None, subject_1_org_id=None):
         self.subject_1_id = subject_1_id
         self.subject_1_org_id = subject_1_org_id
-        self.subject_2 = subject_2_id
+        self.subject_2_id = subject_2_id
         self.subject_2_org_id = subject_2_org_id
         self.subject_1_role = subject_1_role
         self.subject_2_role = subject_2_role
@@ -67,7 +67,7 @@ class PedigreeRelationship(IdentityBase):
                 o.append({
                     "subject_1_id": relationship.subject_1_id,
                     "subject_1_org_id": relationship.subject_1_org_id,
-                    "subject_2_id": relationship.subject_2,
+                    "subject_2_id": relationship.subject_2_id,
                     "subject_2_org_id": relationship.subject_2_org_id,
                     "subject_1_role": relationship.subject_1_role,
                     "subject_2_role": relationship.subject_2_role,
@@ -77,8 +77,8 @@ class PedigreeRelationship(IdentityBase):
         else:
             o = {}
             o = {
-                'subject_1': pedigree.subject_1,
-                'subject_2': pedigree.subject_2,
+                'subject_1': pedigree.subject_1_id,
+                'subject_2': pedigree.subject_2_id,
                 'subject_1_role': pedigree.subject_1_role,
                 'subject_2_role': pedigree.subject_2_role,
                 'protocol_id': pedigree.protocol_id,
@@ -126,4 +126,22 @@ class PedigreeRelationshipRequestHandeler(JsonRequestBase):
         pass
 
     def delete(self, **kwargs):
+        pass
+
+
+class RelationshipTypeRequestHandler(JsonRequestBase):
+    def __init__(self, host, root_path='', secure=False, api_key=None):
+        RequestBase.__init__(self, host, '{0}/api/pedigree/relationship_types'.format(root_path), secure, api_key)
+
+    def get(self):
+        path = self.root_path + '/api/pedigree/relationship_types/'
+        return self.processGet(path)
+
+    def create(self):
+        pass
+
+    def delete(self):
+        pass
+
+    def update(self):
         pass
