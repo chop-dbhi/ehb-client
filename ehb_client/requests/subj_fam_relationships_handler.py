@@ -102,16 +102,20 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
     def __init__(self, host, root_path='', secure=False, api_key=None):
         RequestBase.__init__(self, host, '{0}/api/famRelation/'.format(root_path), secure, api_key)
 
-    def _read_and_action(self, func, **subid_or_protocolid):
-        subject_id = subid_or_protocolid.pop('subject_id', None)
-        protocol_id = subid_or_protocolid.pop('protocol_id', None)
+    def _read_and_action(self, func, **id):
+        subject_id = id.pop('subject_id', None)
+        protocol_id = id.pop('protocol_id', None)
+        relationship_id = id.pop('relationship_id', None)
         if subject_id:
             path = self.root_path + 'subject_id/' + str(subject_id) + '/'
             return func(path)
         if protocol_id:
             path = self.root_path + 'protocol_id/' + str(protocol_id) + '/'
             return func(path)
-        raise InvalidArguments("subject id or protocol id required")
+        if relationship_id:
+            path = self.root_path + 'id' + str(relationship_id) + '/'
+            return func(path)
+        raise InvalidArguments("subject id, protocol id or relationship id required")
 
     def get(self, **subid_or_protocolid):
         '''
@@ -134,8 +138,10 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
     def update(self, **kwargs):
         pass
 
-    def delete(self, **kwargs):
-        pass
+    def delete(self, **relationship_id):
+        def func(path):
+            return self.processDelete(path)
+        return self._read_and_action(func, **relationship_id)
 
 
 class RelationshipTypeRequestHandler(JsonRequestBase):
