@@ -194,20 +194,46 @@ def relationship_create_response():
 
 @pytest.fixture(scope='module')
 def relationship_get_by_subject():
-    json_response = json.loads("""[{"related_subject_id": 2,\
-                "related_subject_org": "AMAZING CHILDREN'S HOSPITAL",\
-                "related_subject_org_id": "JULYTEST",\
-                "role": "3",
-                "subject_id": 1,
-                "subject_org": "AMAZING CHILDREN'S HOSPITAL",
-                "subject_org_id": "MRN123"},
-                {"related_subject_id": 1,
-                "related_subject_org": "AMAZING CHILDREN\'S HOSPITAL",
-                "related_subject_org_id": "MRN123",
-                "role": "2",
-                "subject_id": 2,
-                "subject_org": "AMAZING CHILDREN'S HOSPITAL",
-                "subject_org_id": "JULYTEST"}] """)
+    json_response = json.loads("""[{\
+                "id": 1,\
+                "subject_1": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "2015-01-01 00:00:00",\
+                    "first_name": " ",\
+                    "last_name": " ",\
+                    "organization": 2,\
+                    "id": 1,\
+                    "organization_subject_id": "MRN123",\
+                    "organization_id_label": "Medical Record Number",\
+                    "dob": "1970-01-01"\
+                },\
+                "subject_2": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "22015-01-01 00:00:00",\
+                    "first_name": " ",\
+                    "last_name": " ",\
+                    "organization": 2,\
+                    "id": 2,\
+                    "organization_subject_id": "JULYTEST",\
+                    "organization_id_label": "Medical Record Number",\
+                    "dob": "1900-01-02"\
+                },\
+                "subject_1_role": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "2015-01-01 00:00:00",\
+                    "id": "4",\
+                    "typ": "familial-sibling",\
+                    "desc": "Brother"\
+                },\
+                "subject_2_role": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "2015-01-01 00:00:00",\
+                    "id": "4",\
+                    "typ": "familial-sibling",\
+                    "desc": "Sister" }}]""")
+
+
+
     json_string = json.dumps(json_response)
     return json_string.encode()
 

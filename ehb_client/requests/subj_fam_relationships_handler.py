@@ -17,6 +17,12 @@ class SubjFamRelationship(IdentityBase):
         self.created = created
         self.id = id
 
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
+
+    def __repr__(self):
+        return str(self.__dict__)
+
     @staticmethod
     def findIdentity(searchTermsDict, *identities):
         id = searchTermsDict.get("id", None)
@@ -150,7 +156,6 @@ class RelationshipTypeRequestHandler(JsonRequestBase):
 
     def get(self):
         path = self.root_path + '/api/famRelation/relationship_types/'
-        print(self.processGet(path))
         return self.processGet(path)
 
     def create(self):
