@@ -25,11 +25,12 @@ class SubjFamRelationship(IdentityBase):
 
     @staticmethod
     def findIdentity(searchTermsDict, *identities):
-        id = searchTermsDict.get("id", None)
+        id = searchTermsDict['id']
         if id:
             for p in identities:
                 if p.id == int(id):
                     return p
+            return p
 
     @staticmethod
     def identity_from_jsonObject(jsonObj):
@@ -135,10 +136,10 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
 
     def create(self, *relationships):
         def onSuccess(p, o):
+            p.id = int(o['id'])
             # TODO getting created and modified cause NoneType error
             # p.created = RequestBase.dateTimeFromJsonString(o.get('created'))
             # p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
-            pass
         return self.standardCreate(SubjFamRelationship, onSuccess, *relationships)
 
     def update(self, **kwargs):
