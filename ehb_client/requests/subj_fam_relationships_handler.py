@@ -120,7 +120,7 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
             path = self.root_path + 'protocol_id/' + str(protocol_id) + '/'
             return func(path)
         if relationship_id:
-            path = self.root_path + 'id' + str(relationship_id) + '/'
+            path = self.root_path + 'id/' + str(relationship_id) + '/'
             return func(path)
         raise InvalidArguments("subject id, protocol id or relationship id required")
 
@@ -142,8 +142,10 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
             # p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
         return self.standardCreate(SubjFamRelationship, onSuccess, *relationships)
 
-    def update(self, **kwargs):
-        pass
+    def update(self, *relationships):
+        def onSuccess(relationship, o):
+            relationship.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
+        return self.standardUpdate(SubjFamRelationship, onSuccess, *relationships)
 
     def delete(self, **relationship_id):
         def func(path):
