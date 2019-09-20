@@ -120,11 +120,11 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
             path = self.root_path + 'protocol_id/' + str(protocol_id) + '/'
             return func(path)
         if relationship_id:
-            path = self.root_path + 'id/' + str(relationship_id) + '/'
+            path = self.root_path + 'relationship_id/' + str(relationship_id) + '/'
             return func(path)
         raise InvalidArguments("subject id, protocol id or relationship id required")
 
-    def get(self, **subid_or_protocolid):
+    def get(self, **id):
         '''
         Given a id = subject id integer
         OR protocol_id = string
@@ -132,7 +132,7 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
         '''
         def func(path):
             return SubjFamRelationship.identity_from_json(self.processGet(path))
-        return self._read_and_action(func, **subid_or_protocolid)
+        return self._read_and_action(func, **id)
 
     def create(self, *relationships):
         def onSuccess(p, o):
