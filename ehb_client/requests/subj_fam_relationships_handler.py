@@ -1,6 +1,7 @@
 from ehb_client.requests.base import JsonRequestBase, RequestBase, IdentityBase
 from ehb_client.requests.exceptions import InvalidArguments
 import json
+log = logging.getLogger('ehb-client')
 
 
 class SubjFamRelationship(IdentityBase):
@@ -61,12 +62,12 @@ class SubjFamRelationship(IdentityBase):
 
         for item in jsonObj:
             relationships.append(SubjFamRelationship(subject_1_id=int(item['subject_1']['id']),
-                                                          subject_1_org_id=item['subject_1']['organization_subject_id'],
-                                                          subject_2_id=int(item['subject_2']['id']),
-                                                          subject_2_org_id=item['subject_2']['organization_subject_id'],
-                                                          subject_1_role=item['subject_1_role']['desc'],
-                                                          subject_2_role=item['subject_2_role']['desc'],
-                                                          id=item['id']))
+                                                     subject_1_org_id=item['subject_1']['organization_subject_id'],
+                                                     subject_2_id=int(item['subject_2']['id']),
+                                                     subject_2_org_id=item['subject_2']['organization_subject_id'],
+                                                     subject_1_role=item['subject_1_role']['desc'],
+                                                     subject_2_role=item['subject_2_role']['desc'],
+                                                     id=item['id']))
 
         return relationships
 
@@ -131,7 +132,11 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
         this method polls the server for the relationships.
         '''
         def func(path):
-            return SubjFamRelationship.identity_from_json(self.processGet(path))
+            if 'subject_id' in id:
+                return SubjFamRelationship.identity_from_json(self.processGet(path))
+
+            else:
+                return self.processGet(path)
         return self._read_and_action(func, **id)
 
     def create(self, *relationships):
@@ -142,10 +147,13 @@ class SubjFamRelationshipRequestHandeler(JsonRequestBase):
             # p.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
         return self.standardCreate(SubjFamRelationship, onSuccess, *relationships)
 
-    def update(self, *relationships):
-        def onSuccess(relationship, o):
-            relationship.modified = RequestBase.dateTimeFromJsonString(o.get('modified'))
-        return self.standardUpdate(SubjFamRelationship, onSuccess, *relationships)
+    def update(self, relationship_id, *relationships):
+        try:
+            relationships = json.dumps(relationships)
+        except ValueError:
+            log.error("Decoding JSON has failed")
+        path = self.root_path
+        return self.processPut(path, relationships)
 
     def delete(self, **relationship_id):
         def func(path):
