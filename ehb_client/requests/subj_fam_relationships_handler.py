@@ -1,6 +1,8 @@
 from ehb_client.requests.base import JsonRequestBase, RequestBase, IdentityBase
 from ehb_client.requests.exceptions import InvalidArguments
 import json
+import logging
+
 log = logging.getLogger('ehb-client')
 
 
