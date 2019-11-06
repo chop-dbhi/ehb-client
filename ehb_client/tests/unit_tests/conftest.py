@@ -1,4 +1,5 @@
 import pytest
+import json
 
 
 @pytest.fixture(scope='module')
@@ -184,3 +185,59 @@ def subject_update_response2():
 @pytest.fixture(scope='module')
 def subject_update_badresponse():
     return b'[{"errors": [{"id": 1}], "id": "34", "success": false}]'
+
+
+@pytest.fixture(scope='module')
+def relationship_create_response():
+    return b'[{"success": true, "created": "2018-9-21 15:0:22", "subject_1_role": 1, "protocol_id": "1", "modified": "2018-9-21 15:0:22", "subject_1": 2, "subject_2_role": 4, "id": "1"}]'
+
+
+@pytest.fixture(scope='module')
+def relationship_get_by_subject():
+    json_response = json.loads("""[{\
+                "id": 1,\
+                "subject_1": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "2015-01-01 00:00:00",\
+                    "first_name": " ",\
+                    "last_name": " ",\
+                    "organization": 2,\
+                    "id": 1,\
+                    "organization_subject_id": "MRN123",\
+                    "organization_id_label": "Medical Record Number",\
+                    "dob": "1970-01-01"\
+                },\
+                "subject_2": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "22015-01-01 00:00:00",\
+                    "first_name": " ",\
+                    "last_name": " ",\
+                    "organization": 2,\
+                    "id": 2,\
+                    "organization_subject_id": "JULYTEST",\
+                    "organization_id_label": "Medical Record Number",\
+                    "dob": "1900-01-02"\
+                },\
+                "subject_1_role": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "2015-01-01 00:00:00",\
+                    "id": "4",\
+                    "typ": "familial-sibling",\
+                    "desc": "Brother"\
+                },\
+                "subject_2_role": {\
+                    "created": "2015-01-01 00:00:00",\
+                    "modified": "2015-01-01 00:00:00",\
+                    "id": "4",\
+                    "typ": "familial-sibling",\
+                    "desc": "Sister" }}]""")
+
+
+
+    json_string = json.dumps(json_response)
+    return json_string.encode()
+
+
+@pytest.fixture(scope='module')
+def relationship_get_by_protocol():
+    return relationship_get_by_subject()
