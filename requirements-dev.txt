@@ -1,4 +1,4 @@
-Django<=1.10
+Django>=1.11.27,<1.12
 pytest>=3,<4
 pytest-cov>=2.3,<3
 pytest-mock>=1.2,<2
