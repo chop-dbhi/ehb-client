@@ -22,10 +22,11 @@ class RequestHandler(object):
 
     def sendRequest(self, verb, path='', headers='', body=''):
         self.lastrequestbody = body
-        if(self.secure):
-            c = client.HTTPSConnection(self.host)
-        else:
-            c = client.HTTPConnection(self.host)
+        # if(self.secure):
+        #     c = client.HTTPSConnection(self.host)
+        # else:
+        #     c = client.HTTPConnection(self.host)
+        c = client.HTTPSConnection(self.host)
         headers = self.append_key(headers)
         c.request(verb, path, body, headers)
         r = c.getresponse()
